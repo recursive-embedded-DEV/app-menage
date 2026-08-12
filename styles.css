@@ -1,0 +1,68 @@
+.ajout {
+    display: flex;
+    gap: 8px;
+    padding-top: 8px;
+}
+
+.ajout input {
+    
+    flex: 1;
+}
+
+body {
+    font-family: system-ui, sans-serif;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+header {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-start;
+}
+
+.nav-bar a {
+    align-items: center;
+    color: dimgray;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    text-align: center;
+    text-decoration: none;
+}
+
+main {
+    padding: 8px;
+}
+
+main li {
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+main ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-bar .active {
+    color: blue;
+}
+
+.nav-bar li {
+    flex: 1;
+}
+
+.nav-bar ul {
+    border-top: 1px solid lightgray;
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
