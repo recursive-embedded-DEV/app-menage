@@ -1,0 +1,134 @@
+[
+  {
+    "id": "pokebowl-saumon",
+    "titre": "Pokebowl au saumon",
+    "image": "pokebowl-saumon.png",
+    "temps": [
+      { "libelle": "Préparation", "valeur": "15 min" },
+      { "libelle": "Cuisson", "valeur": "aucune" },
+      { "libelle": "Rendement", "valeur": "2 portions" }
+    ],
+    "ingredients": [
+      {
+        "section": "",
+        "items": [
+          { "nom": "Riz blanc, cuit", "quantite": "200 g" },
+          { "nom": "Poke au saumon, DOM Reserve", "quantite": "2 portions" },
+          { "nom": "Carottes moyennes, râpées", "quantite": "2" },
+          { "nom": "Mini-concombres, coupés en quartier", "quantite": "2" },
+          { "nom": "Fraises, effilées", "quantite": "80 g" },
+          { "nom": "Edamames", "quantite": "80 g" },
+          { "nom": "Laitue", "quantite": "Au goût" },
+          { "nom": "Coriandre", "quantite": "Au goût" },
+          { "nom": "Mayo épicée", "quantite": "1 c. à table" }
+        ]
+      }
+    ],
+    "etapes": [
+      {
+        "section": "",
+        "items": [
+          "Plongez les sachets de saumon dans l'eau froide environ 10 minutes ou jusqu'au dégel complet.",
+          "Dans une casserole moyenne, faites cuire le riz blanc.",
+          "Pendant ce temps, lavez et coupez les légumes, la laitue et les fruits.",
+          "Assemblez les pokebowl comme souhaité."
+        ]
+      }
+    ],
+    "notes": []
+  },
+  {
+    "id": "banh-mi",
+    "titre": "Bol façon bành mì",
+    "image": "banh-mi.png",
+    "temps": [
+      { "libelle": "Préparation", "valeur": "40 min" },
+      { "libelle": "Cuisson", "valeur": "20 min" },
+      { "libelle": "Repos", "valeur": "20 min" },
+      { "libelle": "Rendement", "valeur": "4 portions" }
+    ],
+    "ingredients": [
+      {
+        "section": "Pour les carottes et les radis marinés",
+        "items": [
+          { "nom": "Petites carottes, pelées et coupées en bâtonnets", "quantite": "3" },
+          { "nom": "Radis roses, finement émincés", "quantite": "3" },
+          { "nom": "Vinaigre", "quantite": "250 mL" },
+          { "nom": "Sucre", "quantite": "30 mL" },
+          { "nom": "Sel", "quantite": "2,5 mL" }
+        ]
+        },
+        {
+            "section": "Pour la vinaigrette",
+        "items": [
+          { "nom": "Jus de lime", "quantite": "3 c. à soupe" },
+          { "nom": "Sauce soya", "quantite": "2 c. à soupe" },
+          { "nom": "Sucre", "quantite": "2 c. à soupe" },
+          { "nom": "Sauce de poisson", "quantite": "1 c. à soupe" },
+          { "nom": "Piment thaï, épépiné et finement émincé", "quantite": "1/2" }
+        ]
+        },
+        {
+         "section": "Pour les nouilles",
+        "items": [
+          { "nom": "Porc haché", "quantite": "450 g" },
+          { "nom": "Coriandre haché", "quantite": "2 c. à soupe" },
+          { "nom": "Ciboulette, finement haché", "quantite": "2 c. à soupe" },
+          { "nom": "Gousses d'ail, finement haché", "quantite": "2" },
+          { "nom": "Sel fin", "quantite": "1 c. à thé" },
+          { "nom": "Sambal oelek", "quantite": "1/2 c. à thé" },
+          { "nom": "Poivre du moulin", "quantite": "1/4 c. à thé" },
+          { "nom": "Huile de canola", "quantite": "1 c. à soupe" }
+        ]
+        },
+        {
+        "section": "Pour le service",
+        "items": [
+          { "nom": "Concombres libanais, taillés en rubans", "quantite": "2" },
+          { "nom": "Feuilles de coriandre", "quantite": "1/2 tasse" },
+          { "nom": "Feuilles de menthe fraîche", "quantite": "1/2 tasse" },
+          { "nom": "Arachides salées, concassées", "quantite": "Au goût" }
+        ]
+      }
+    ],
+    "etapes": [
+      {
+        "section": "Pour les carottes et les radis marinés",
+        "items": [
+          "Dans un pot en verre stérilisé, mettez les bâtonnets de carottes et les radis émincés.",
+          "Dans une petite casserole, à feu moyen, faites chauffer le vinaigre, le sucre et le sel en remuant de temps en temps, jusqu’à ce que le sucre soit dissous.",
+          "Versez la saumure sur les légumes (ce n’est pas grave si le mélange ne les recouvre pas entièrement). Mélangez le tout et laissez reposer à température ambiante 20 minutes. Vous pouvez préparer les légumes marinés la veille et les conserver plusieurs semaines au réfrigérateur."
+        ]
+        },
+        {
+        "section": "Pour la vinaigrette",
+        "items": [
+          "Dans un grand bol, mélangez tous les ingrédients jusqu’à ce que le sucre soit dissous. Réservez la vinaigrette."
+        ]
+        },
+        {
+        "section": "Pour les nouilles",
+        "items": [
+          "Faites cuire les nouilles selon les instructions de l’emballage. Égouttez-les et rincez-les sous l’eau froide. Ajoutez l’huile de sésame et mélangez les nouilles pour éviter qu’elles collent ensemble. Réservez-les."
+        ]
+        },
+        {
+        "section": "Pour les boulettes",
+        "items": [
+          "Dans un grand bol, mélangez tous les ingrédients des boulettes sauf l’huile. Formez 16 boulettes, sans trop les compacter afin qu’elles restent moelleuses.",
+          "Dans une poêle antiadhésive, à feu moyen-élevé, faites chauffer l’huile. Faites cuire les boulettes de 3 à 5 minutes de chaque côté ou jusqu’à ce qu’elles soient cuites."
+        ]
+        },
+        {
+        "section": "Pour le service",
+        "items": [
+          "Répartissez les nouilles dans des bols. Arrosez de la moitié de la vinaigrette. Ajoutez les boulettes, les légumes marinés et le concombre. Parsemez généreusement de feuilles de coriandre, de menthe et d’arachides concassées. Servez les bols accompagnés du reste de la vinaigrette."
+        ]
+      }
+    ],
+    "notes": [
+    "Piment thaï : remplaçable par 2,5 ml de sambal oelek.",
+    "Nouilles : remplaçables par du riz."
+      ]
+  }
+]

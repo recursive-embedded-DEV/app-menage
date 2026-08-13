@@ -1,0 +1,412 @@
+
+/
+Développement d'une application
+Développement d'une application
+Ce projet vise à créer une application pour organiser la vie quotidienne de notre ménage. La première version fournira les horaires de chacun des membres synchronisés avec Google Agenda, une section pour consigner différentes listes d'achats ou de tâches à faire et, enfin, une section pour compiler les recettes que nous aimons.
+
+
+
+
+How can I help you today?
+
+
+Recents
+Mise en page recette HTML/CSS
+1 minute ago
+Débuter le codage d'une première page web
+yesterday
+Cheatsheet HTML et CSS
+2 days ago
+Fondations HTML du Odin Project
+Jul 20
+Phase 1 - Fondations du web (HTML/CSS/JavaScript)
+Jul 14
+Application mobile familiale: planification et apprentissage
+Jul 14
+Phase 0 - Préparation et environnement
+Jul 11
+Instructions
+Add instructions to tailor Claude’s responses
+
+Memory
+Only you
+Purpose & context Mathieu is an electrical engineering student at ÉTS (École de Technologie Supérieure) in Montréal building a household management PWA called APP-M&M (app-menage). The project serves a dual purpose: acquiring transferable web development skills relevant to employment and internships, and delivering a genuinely useful app for his household (mixed iOS/Android environment). The three core modules are shared schedules (with Google Calendar sync), shared to-do lists, and a recipe section. A running coach feature and food/nutrition database integration are also planned for later phases. Primary learning resource: The Odin Project (TOP) Foundations path, followed by a planned pivot to javascript.info, react.dev, and Supabase docs. Academic success (including an upcoming systems programming course, ELE216, conducted in C on GNU/Linux) takes explicit priority over the personal project. Target stack: React, TypeScript, Vite, Tailwind, Supabase (BaaS). App targets mobile format (max-width ~400px). GitHub: recursive-embedded-DEV | Repo: app-menage --- Current state Mathieu has completed TOP Foundations Phase 1 through CSS fundamentals and built a fully deployed static HTML/CSS mockup of the to-do list screen — published on GitHub Pages. The mockup includes a fixed bottom nav bar, a header with back navigation, checkable tasks with CSS strikethrough (input:checked + span), and an add-task section. It was explicitly scoped as a throwaway prototype (no JavaScript, to be rebuilt in React later). Sessions are numbered sequentially and documented in a structured journal. The most recent sessions covered HTML boilerplate, semantic HTML, lists, links, anchors, GitHub Pages deployment, and CSS styling patterns. CSS corrections in the latest session included: proper <a> vs <button> semantics (navigate vs act), removing align-items on non-flex elements, and avoiding empty interactive elements. A phased roadmap exists with Phase 3 (working shared to-do list with Supabase) identified as the key early milestone. --- On the horizon Continuing TOP Foundations (JavaScript section upcoming) Rebuilding the to-do list screen in React once JS foundations are in place Dual-boot Ubuntu installation (deferred to a later date, needed for ELE216 lab requirements involving hardware profiling and FPGA work) Validating RACE session warmup/cooldown values in the running plan data against original PDFs before regenerating plans.json Post-Phase-3 backlog: meal planner, real-time shared shopping list, household dashboard with charts, chore rotation engine, shared expense splitting — all explicitly deferred per anti-scope-creep principle --- Key learnings & principles "Construis, ne collectionne pas" — Mathieu's personal principle against passive resource accumulation; applied to cheatsheets, tools, and features alike Anti-scope-creep discipline — features and tools are explicitly deferred until the appropriate phase Understand the "why" before executing — Mathieu consistently wants rationale before running commands or applying techniques Atomic commits and the Git three-zone model (working directory → staging → repository) are internalized from early sessions PWA over native iOS — ruled out Swift/SwiftUI in favor of transferable web skills given household's mixed device environment GPS background tracking not achievable on iOS PWA — screen-lock kills position updates; accepted workaround is foreground-only GPS or Strava integration Data modeling principles from the running plan work: store durations in seconds as integers, use zero-convention (zero = block doesn't exist), separate plan templates from user instances, keep derived data calculated not stored --- Approach & patterns Session-based, documented learning: each session is numbered, timed, and logged in a structured journal (date, phase, concepts, blockers, progress, next steps, resources) During active study sessions: Mathieu shares notes progressively and prefers Claude to listen and synthesize at the end rather than interrupt with explanations Code review loop: Mathieu submits code → receives targeted feedback → corrects himself → resubmits; corrections are precise, not prescriptive Honest curation over exhaustive lists: Mathieu values filtered recommendations with clear reasoning for exclusions (e.g., why certain tutorial sites were deprioritized) Direct communication: flags inconsistencies immediately, pushes back on pedagogical tangents when the goal is a concrete deliverable Communicates with Claude in French --- Tools & resources Development: VS Code (with GitHub settings sync), Git Bash (for Unix commands on Windows), Node.js LTS, npm, Vite Version control: Git + GitHub (app-menage repo), GitHub Pages for live deploys References: MDN (primary CSS/HTML reference), devhints.io (live coding companion), quickref.me Data: Excel workbook for running plan data (plans, seances, types, efforts, readme sheets); compiled to plans.json via compile-plans.js Documentation: Local documentation/ folder (Word journal + roadmap files) — excluded from .gitignore, not version-controlled (migration to versioned Markdown flagged as a pending decision) Environment note: Currently on Windows; dual-boot Ubuntu deferred but planned for ELE216 requirements
+
+Last updated 23 hours ago
+
+Context
+2% of project capacity used
+
+plans.json
+3,889 lines
+
+json
+
+
+
+compile-plans.js
+337 lines
+
+js
+
+
+
+APP-M&M_Feuille de route.docx
+318 lines
+
+docx
+
+
+
+APP-M&M_Journal de bord.docx
+149 lines
+
+docx
+
+
+
+Training_Plan_Data.xlsx
+xlsx
+
+
+Scheduled
+Set up recurring tasks for this project.
+
+compile-plans.js
+/* ============================================================================
+ * compile-plans.js
+ * ----------------------------------------------------------------------------
+ * Convertit les plans d'entraînement (classeur Excel) en JSON structuré,
+ * prêt à être consommé par l'app.
+ *
+ * POURQUOI CE SCRIPT EXISTE
+ * -------------------------
+ * L'Excel est la SOURCE DE VÉRITÉ : une transcription fidèle des PDF de la
+ * Clinique du coureur, vérifiable ligne par ligne. C'est un tableau PLAT :
+ * chaque séance est une ligne, avec toujours les mêmes colonnes.
+ *
+ * Mais un tableau plat est inutilisable par le minuteur de l'app. Celui-ci a
+ * besoin d'une SÉQUENCE DE BLOCS qu'il peut parcourir pour biper à chaque
+ * transition. Ce script fait le pont : il COMPILE le plat vers le structuré.
+ *
+ * Règle d'or : on ne modifie jamais le JSON à la main. Si la structure doit
+ * changer, on change ce script et on le relance.
+ *
+ * ----------------------------------------------------------------------------
+ * MODE D'EMPLOI (console du navigateur — aucune installation)
+ *
+ *   1. Ouvrir une vraie page web (ex. https://example.com), puis la console
+ *      (Chrome : Option-Commande-J sur Mac, Ctrl+Maj+J sur Windows).
+ *
+ *   2. Si Chrome refuse le collage : taper 5 commandes bidon (1, 2, 3, 4, 5
+ *      + Entrée à chaque fois). Le blocage anti-arnaque disparaît alors.
+ *
+ *   3. Charger les données depuis Excel. Dans la feuille "seances",
+ *      sélectionner A1:J201 (en-tête compris) puis copier. Dans la console,
+ *      taper (SANS appuyer sur Entrée avant la toute fin) :
+ *
+ *          var SEANCES_TSV = `
+ *          [coller ici avec Cmd+V]
+ *          `;
+ *
+ *      Le caractère ` est une backtick (accent grave). C'est le seul
+ *      délimiteur de chaîne en JS qui accepte les retours à la ligne.
+ *      Attention : Entrée EXÉCUTE. On ne l'appuie qu'une fois, à la fin.
+ *
+ *      Répéter avec la feuille "plans" (A1:J4) dans PLANS_TSV.
+ *
+ *   4. Vérifier :  SEANCES_TSV.split('\n').length   → environ 201
+ *                  PLANS_TSV.split('\n').length     → environ 4
+ *
+ *   5. Coller TOUT ce fichier dans la console, puis appuyer sur Entrée.
+ *
+ *   6. Récupérer le résultat :   copy(JSON.stringify(resultat, null, 2));
+ *      puis coller dans un éditeur et enregistrer sous plans.json.
+ *
+ *      ATTENTION sur Mac : TextEdit enregistre en RTF par défaut, ce qui
+ *      corrompt le JSON. Faire Format > Convertir au format texte AVANT de
+ *      coller — ou mieux, utiliser VS Code.
+ *
+ * ----------------------------------------------------------------------------
+ * PLUS TARD : quand Node.js sera installé, ce script deviendra un vrai
+ * script de build (lecture du .xlsx via SheetJS, écriture du .json sur disque)
+ * versionné dans le dépôt Git. La logique ci-dessous ne changera pas.
+ * ========================================================================== */
+ 
+ 
+/* ============================================================================
+ * ÉTAPE 1 — LE PARSEUR TSV
+ * ----------------------------------------------------------------------------
+ * Quand on copie des cellules dans Excel, le presse-papiers contient du TSV :
+ * les colonnes sont séparées par des tabulations, les lignes par des retours
+ * à la ligne. Il faut transformer ce texte brut en objets JavaScript.
+ * ========================================================================== */
+ 
+/**
+ * Convertit une cellule (toujours du TEXTE) vers son vrai type.
+ *
+ * LE PIÈGE : tout ce qui sort d'un fichier texte est une chaîne de caractères.
+ * La chaîne "12" n'est PAS le nombre 12. Sans cette conversion, un calcul
+ * comme run_s * reps donnerait n'importe quoi.
+ */
+function convertir(v) {
+  // Cellule vide → null (et non 0 : Number('') vaut 0, ce qui serait faux)
+  if (v === undefined || v.trim() === '') return null;
+ 
+  const n = Number(v);
+ 
+  // isNaN() répond "ce n'est PAS un nombre" — attention, c'est une négation.
+  // Si la conversion échoue, on garde le texte (nettoyé de ses espaces).
+  return isNaN(n) ? v.trim() : n;
+}
+ 
+/**
+ * Transforme un bloc de texte tabulé en tableau d'objets.
+ *
+ *   plan_id \t week \t day        →   [ { plan_id: "10km-...", week: 1, day: 1 } ]
+ *   10km-.. \t 1    \t 1
+ */
+function parseTSV(texte) {
+  // 1. Découper en lignes, nettoyer, jeter les lignes vides.
+  //    Le .trim() élimine aussi le \r invisible que Windows laisse traîner.
+  const lignes = texte
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l.length > 0);
+ 
+  // 2. La première ligne contient les noms de colonnes.
+  const entetes = lignes[0].split('\t').map(e => e.trim());
+ 
+  // 3. Pour chaque ligne suivante, fabriquer un objet.
+  //    .slice(1) saute l'en-tête. .map() transforme chaque ligne en objet.
+  return lignes.slice(1).map(ligne => {
+    const cellules = ligne.split('\t');
+    const obj = {};
+ 
+    // forEach donne l'élément ET son index. On associe chaque nom de colonne
+    // à la cellule qui se trouve à la même position.
+    // Noter obj[nom] et non obj.nom : les crochets permettent d'utiliser une
+    // variable comme nom de propriété.
+    entetes.forEach((nom, i) => {
+      obj[nom] = convertir(cellules[i]);
+    });
+ 
+    return obj;
+  });
+}
+ 
+ 
+/* ============================================================================
+ * ÉTAPE 2 — LA COMPILATION EN BLOCS
+ * ----------------------------------------------------------------------------
+ * Le coeur du script. Une ligne plate devient une séquence de blocs que le
+ * minuteur pourra parcourir sans jamais savoir de quel TYPE de séance il
+ * s'agit. Un seul code, tous les types de séances.
+ * ========================================================================== */
+ 
+/**
+ * Transforme une ligne de la feuille "seances" en liste de blocs.
+ *
+ * LA CONVENTION DES ZÉROS (documentée dans le readme du classeur) :
+ * un 0 signifie "ce bloc n'existe pas dans cette séance" — et non "donnée
+ * manquante". D'où les `if (... > 0)` : on n'émet un bloc que s'il a une durée.
+ * C'est ce qui évite les échauffements fantômes de zéro seconde.
+ *
+ * Formes produites :
+ *   EC   → [run]                             (course continue)
+ *   EPI  → [warmup, repeat, cooldown]        (intervalles)
+ *   RACE → [race] ou [warmup, race, cooldown]
+ */
+function compilerBlocs(s) {
+  const blocs = [];
+ 
+  // --- Échauffement (seulement s'il existe) ---
+  if (s.warmup_s > 0) {
+    blocs.push({ kind: 'warmup', duree_s: s.warmup_s });
+  }
+ 
+  // --- Corps de la séance ---
+  if (s.type === 'RACE') {
+    // Choix de conception : la course a son propre bloc, distinct d'une simple
+    // course continue. L'app pourra ainsi l'afficher différemment
+    // ("Jour de course !"). Pour revenir en arrière, supprimer ce cas.
+    blocs.push({ kind: 'race', duree_s: s.run_s });
+ 
+  } else if (s.reps === 1 && s.walk_s === 0) {
+    // Une seule répétition et aucune marche = course continue.
+    blocs.push({ kind: 'run', duree_s: s.run_s });
+ 
+  } else {
+    // Intervalles : un bloc "repeat" qui CONTIENT d'autres blocs.
+    // C'est une structure imbriquée — le minuteur boucle dessus `reps` fois.
+    blocs.push({
+      kind: 'repeat',
+      reps: s.reps,
+      blocs: [
+        { kind: 'run',  duree_s: s.run_s },
+        { kind: 'walk', duree_s: s.walk_s }
+      ]
+    });
+  }
+ 
+  // --- Retour au calme (seulement s'il existe) ---
+  if (s.cooldown_s > 0) {
+    blocs.push({ kind: 'cooldown', duree_s: s.cooldown_s });
+  }
+ 
+  return blocs;
+}
+ 
+/**
+ * Calcule la durée totale d'une séance à partir de ses blocs.
+ *
+ * POURQUOI CALCULER PLUTÔT QUE STOCKER : la durée totale est une donnée
+ * DÉRIVÉE. Si on la stockait dans l'Excel, elle finirait tôt ou tard par
+ * contredire les durées des blocs. On ne stocke jamais ce qu'on peut calculer.
+ *
+ * .reduce() parcourt un tableau en accumulant un résultat — ici, un total.
+ */
+function dureeTotale(blocs) {
+  return blocs.reduce((total, b) => {
+    if (b.kind === 'repeat') {
+      // Un bloc repeat contient des blocs : on somme un tour, puis on
+      // multiplie par le nombre de répétitions.
+      const unTour = b.blocs.reduce((t, x) => t + x.duree_s, 0);
+      return total + unTour * b.reps;
+    }
+    return total + b.duree_s;
+  }, 0);
+}
+ 
+ 
+/* ============================================================================
+ * ÉTAPE 3 — L'ASSEMBLAGE
+ * ----------------------------------------------------------------------------
+ * On recolle les métadonnées du plan et ses séances compilées.
+ * Le JSON permet l'imbrication : la structure à deux niveaux du classeur
+ * (feuille "plans" + feuille "seances") s'écrase naturellement en un seul
+ * objet par plan.
+ * ========================================================================== */
+ 
+/**
+ * Construit l'objet complet d'un plan : métadonnées + séances compilées.
+ */
+function construirePlan(plan, seances) {
+  const sesSeances = seances
+    // Ne garder que les séances de CE plan (c'est le rôle de la colonne
+    // plan_id — l'équivalent d'une clé étrangère en base de données).
+    .filter(s => s.plan_id === plan.plan_id)
+ 
+    // Trier par semaine, puis par jour. Le `||` sert de départage : si les
+    // semaines sont égales (différence de 0, donc "faux"), on compare les jours.
+    .sort((a, b) => a.week - b.week || a.day - b.day)
+ 
+    // Compiler chaque séance.
+    .map(s => {
+      const blocs = compilerBlocs(s);
+      return {
+        semaine: s.week,
+        jour: s.day,
+        type: s.type,
+        effort: s.effort,
+        duree_totale_s: dureeTotale(blocs),
+        blocs: blocs
+      };
+    });
+ 
+  return {
+    id: plan.plan_id,
+    nom: plan.name,
+    objectif_m: plan.goal,
+    auteur: plan.author,
+    version: plan.version,
+    semaines: plan.weeks,
+    jours_par_semaine: plan.days_per_week,
+    source: plan.source,
+    seances: sesSeances
+  };
+}
+ 
+ 
+/* ============================================================================
+ * ÉTAPE 4 — EXÉCUTION
+ * ========================================================================== */
+ 
+var seances  = parseTSV(SEANCES_TSV);
+var plans    = parseTSV(PLANS_TSV);
+var resultat = plans.map(plan => construirePlan(plan, seances));
+ 
+ 
+/* ============================================================================
+ * ÉTAPE 5 — LES VÉRIFICATIONS
+ * ----------------------------------------------------------------------------
+ * Ne jamais faire confiance à une transformation sans la vérifier.
+ * Écrire du code qui contrôle ses propres données plutôt que de les relire
+ * à l'oeil : c'est un réflexe de pro, et ça prend deux minutes.
+ * ========================================================================== */
+ 
+console.log('--- Chargement ---');
+console.log('Séances lues :', seances.length, '(attendu : 200)');
+console.log('Plans lus    :', plans.length, '(attendu : 3)');
+ 
+// LE test critique. Si week est une chaîne, tous les calculs seront faux.
+console.log('week est bien un nombre ?', typeof seances[0].week === 'number');
+ 
+console.log('--- Résultat ---');
+resultat.forEach(p => {
+  const attendu = p.semaines * p.jours_par_semaine;
+  const ok = p.seances.length === attendu ? 'OK' : 'ECHEC';
+  console.log(`${ok}  ${p.id} : ${p.seances.length}/${attendu} séances`);
+});
+ 
+// Vérifier qu'aucun bloc de durée nulle n'a été émis (convention des zéros).
+let blocsVides = 0;
+resultat.forEach(p => p.seances.forEach(s => s.blocs.forEach(b => {
+  if (b.kind === 'repeat') {
+    b.blocs.forEach(x => { if (x.duree_s === 0) blocsVides++; });
+  } else if (b.duree_s === 0) {
+    blocsVides++;
+  }
+})));
+console.log(blocsVides === 0 ? 'OK  aucun bloc vide' : `ECHEC  ${blocsVides} bloc(s) vide(s)`);
+ 
+console.log('--- Exemple de séance d intervalles ---');
+console.log(resultat[0].seances.find(s => s.type === 'EPI'));
+ 
+ 
+/* ============================================================================
+ * ÉTAPE 6 — RÉCUPÉRER LE FICHIER
+ * ----------------------------------------------------------------------------
+ * copy() est une commande spéciale de la console du navigateur : elle place
+ * son argument dans le presse-papiers. À lancer À LA MAIN après le script :
+ *
+ *     copy(JSON.stringify(resultat, null, 2));
+ *
+ * Le `2` demande une indentation de 2 espaces (lisible par un humain, et
+ * surtout comparable par Git — un JSON sur une seule ligne est illisible dans
+ * un diff).
+ * ========================================================================== */
+ 
+ 
+/* ============================================================================
+ * À FAIRE / POINTS OUVERTS
+ * ----------------------------------------------------------------------------
+ * [ ] INCOHÉRENCE RACE : la course du plan 10 km a un échauffement et un
+ *     retour au calme (300 s / 300 s), mais celles du 5 km et du 21 km n'en
+ *     ont pas. Vérifier les trois PDF, corriger l'EXCEL (pas le JSON), puis
+ *     relancer ce script.
+ *
+ * [ ] Le niveau d'effort 1 n'est pas défini dans la source (qui commence à 2).
+ *     Ligne morte dans la feuille "efforts" — peut être supprimée.
+ *
+ * [ ] effort_min / effort_max dans la feuille "plans" sont des données
+ *     dérivées de la feuille "efforts". Duplication à surveiller.
+ *
+ * [ ] Les feuilles "types" et "efforts" ne sont pas encore intégrées au JSON.
+ *     À ajouter si l'app doit afficher les libellés ("Moyennement difficile")
+ *     plutôt que les codes bruts.
+ *
+ * [ ] LICENCE : ces plans appartiennent à la Clinique du coureur. Usage
+ *     personnel. NE PAS publier dans un dépôt public sans autorisation.
+ * ========================================================================== */
+ 

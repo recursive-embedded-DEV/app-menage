@@ -1,0 +1,3963 @@
+
+/
+Développement d'une application
+Développement d'une application
+Ce projet vise à créer une application pour organiser la vie quotidienne de notre ménage. La première version fournira les horaires de chacun des membres synchronisés avec Google Agenda, une section pour consigner différentes listes d'achats ou de tâches à faire et, enfin, une section pour compiler les recettes que nous aimons.
+
+
+
+
+How can I help you today?
+
+
+Recents
+Mise en page recette HTML/CSS
+just now
+Débuter le codage d'une première page web
+yesterday
+Cheatsheet HTML et CSS
+2 days ago
+Fondations HTML du Odin Project
+Jul 20
+Phase 1 - Fondations du web (HTML/CSS/JavaScript)
+Jul 14
+Application mobile familiale: planification et apprentissage
+Jul 14
+Phase 0 - Préparation et environnement
+Jul 11
+Instructions
+Add instructions to tailor Claude’s responses
+
+Memory
+Only you
+Purpose & context Mathieu is an electrical engineering student at ÉTS (École de Technologie Supérieure) in Montréal building a household management PWA called APP-M&M (app-menage). The project serves a dual purpose: acquiring transferable web development skills relevant to employment and internships, and delivering a genuinely useful app for his household (mixed iOS/Android environment). The three core modules are shared schedules (with Google Calendar sync), shared to-do lists, and a recipe section. A running coach feature and food/nutrition database integration are also planned for later phases. Primary learning resource: The Odin Project (TOP) Foundations path, followed by a planned pivot to javascript.info, react.dev, and Supabase docs. Academic success (including an upcoming systems programming course, ELE216, conducted in C on GNU/Linux) takes explicit priority over the personal project. Target stack: React, TypeScript, Vite, Tailwind, Supabase (BaaS). App targets mobile format (max-width ~400px). GitHub: recursive-embedded-DEV | Repo: app-menage --- Current state Mathieu has completed TOP Foundations Phase 1 through CSS fundamentals and built a fully deployed static HTML/CSS mockup of the to-do list screen — published on GitHub Pages. The mockup includes a fixed bottom nav bar, a header with back navigation, checkable tasks with CSS strikethrough (input:checked + span), and an add-task section. It was explicitly scoped as a throwaway prototype (no JavaScript, to be rebuilt in React later). Sessions are numbered sequentially and documented in a structured journal. The most recent sessions covered HTML boilerplate, semantic HTML, lists, links, anchors, GitHub Pages deployment, and CSS styling patterns. CSS corrections in the latest session included: proper <a> vs <button> semantics (navigate vs act), removing align-items on non-flex elements, and avoiding empty interactive elements. A phased roadmap exists with Phase 3 (working shared to-do list with Supabase) identified as the key early milestone. --- On the horizon Continuing TOP Foundations (JavaScript section upcoming) Rebuilding the to-do list screen in React once JS foundations are in place Dual-boot Ubuntu installation (deferred to a later date, needed for ELE216 lab requirements involving hardware profiling and FPGA work) Validating RACE session warmup/cooldown values in the running plan data against original PDFs before regenerating plans.json Post-Phase-3 backlog: meal planner, real-time shared shopping list, household dashboard with charts, chore rotation engine, shared expense splitting — all explicitly deferred per anti-scope-creep principle --- Key learnings & principles "Construis, ne collectionne pas" — Mathieu's personal principle against passive resource accumulation; applied to cheatsheets, tools, and features alike Anti-scope-creep discipline — features and tools are explicitly deferred until the appropriate phase Understand the "why" before executing — Mathieu consistently wants rationale before running commands or applying techniques Atomic commits and the Git three-zone model (working directory → staging → repository) are internalized from early sessions PWA over native iOS — ruled out Swift/SwiftUI in favor of transferable web skills given household's mixed device environment GPS background tracking not achievable on iOS PWA — screen-lock kills position updates; accepted workaround is foreground-only GPS or Strava integration Data modeling principles from the running plan work: store durations in seconds as integers, use zero-convention (zero = block doesn't exist), separate plan templates from user instances, keep derived data calculated not stored --- Approach & patterns Session-based, documented learning: each session is numbered, timed, and logged in a structured journal (date, phase, concepts, blockers, progress, next steps, resources) During active study sessions: Mathieu shares notes progressively and prefers Claude to listen and synthesize at the end rather than interrupt with explanations Code review loop: Mathieu submits code → receives targeted feedback → corrects himself → resubmits; corrections are precise, not prescriptive Honest curation over exhaustive lists: Mathieu values filtered recommendations with clear reasoning for exclusions (e.g., why certain tutorial sites were deprioritized) Direct communication: flags inconsistencies immediately, pushes back on pedagogical tangents when the goal is a concrete deliverable Communicates with Claude in French --- Tools & resources Development: VS Code (with GitHub settings sync), Git Bash (for Unix commands on Windows), Node.js LTS, npm, Vite Version control: Git + GitHub (app-menage repo), GitHub Pages for live deploys References: MDN (primary CSS/HTML reference), devhints.io (live coding companion), quickref.me Data: Excel workbook for running plan data (plans, seances, types, efforts, readme sheets); compiled to plans.json via compile-plans.js Documentation: Local documentation/ folder (Word journal + roadmap files) — excluded from .gitignore, not version-controlled (migration to versioned Markdown flagged as a pending decision) Environment note: Currently on Windows; dual-boot Ubuntu deferred but planned for ELE216 requirements
+
+Last updated 23 hours ago
+
+Context
+2% of project capacity used
+
+plans.json
+3,889 lines
+
+json
+
+
+
+compile-plans.js
+337 lines
+
+js
+
+
+
+APP-M&M_Feuille de route.docx
+318 lines
+
+docx
+
+
+
+APP-M&M_Journal de bord.docx
+149 lines
+
+docx
+
+
+
+Training_Plan_Data.xlsx
+xlsx
+
+
+Scheduled
+Set up recurring tasks for this project.
+
+plans.json
+[
+  {
+    "id": "10km-clinique-v1",
+    "nom": "Courir un premier 10km",
+    "objectif_m": 10000,
+    "auteur": "Clinique du coureur",
+    "version": 1,
+    "semaines": 12,
+    "jours_par_semaine": 5,
+    "source": "https://cdn.therunningclinic.com/media/6105577/premier10-2019.pdf",
+    "seances": [
+      {
+        "semaine": 1,
+        "jour": 1,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 3,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 600
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 600
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 5,
+        "type": "EC",
+        "effort": 4,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 1,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 3,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 5,
+        "type": "EC",
+        "effort": 4,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 1,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2100
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 3,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 5,
+        "type": "EC",
+        "effort": 5,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2715,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 47,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 3,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3300,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 60,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2760,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 12,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3300,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 60,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2100
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 7,
+        "duree_totale_s": 3000,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 8,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 3000,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 3000
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3300,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 15,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 7,
+        "duree_totale_s": 3300,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 9,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2100
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 3300,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 3300
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3660,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 17,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3300,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 9,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 5,
+        "type": "EC",
+        "effort": 5,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 3660,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 17,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 3540,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 7,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 300
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2100
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 5,
+        "type": "EC",
+        "effort": 9,
+        "duree_totale_s": 3600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 3600
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 3600,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 10,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 3540,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 7,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 300
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 5,
+        "type": "EC",
+        "effort": 9,
+        "duree_totale_s": 3900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 3900
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3030,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 54,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3120,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 14,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 4,
+        "type": "EPI",
+        "effort": 3,
+        "duree_totale_s": 1815,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 27,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 5,
+        "type": "EC",
+        "effort": 8,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3120,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 14,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 3,
+        "duree_totale_s": 2085,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 33,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 5,
+        "type": "RACE",
+        "effort": 10,
+        "duree_totale_s": 4200,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "race",
+            "duree_s": 3600
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "5km-clinique-v1",
+    "nom": "Courir un premier 5km",
+    "objectif_m": 5000,
+    "auteur": "Clinique du coureur",
+    "version": 1,
+    "semaines": 12,
+    "jours_par_semaine": 5,
+    "source": "https://cdn.therunningclinic.com/media/6105576/premier-5km-2019.pdf",
+    "seances": [
+      {
+        "semaine": 1,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 2,
+        "duree_totale_s": 960,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 3,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 60
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 2,
+        "type": "EPI",
+        "effort": 2,
+        "duree_totale_s": 1080,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 4,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 60
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 2,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 5,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 60
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 4,
+        "type": "EPI",
+        "effort": 2,
+        "duree_totale_s": 1320,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 6,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 60
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 5,
+        "type": "EC",
+        "effort": 4,
+        "duree_totale_s": 300,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 5,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 120
+              },
+              {
+                "kind": "walk",
+                "duree_s": 60
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 2,
+        "type": "EPI",
+        "effort": 2,
+        "duree_totale_s": 1680,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 6,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 120
+              },
+              {
+                "kind": "walk",
+                "duree_s": 60
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 2,
+        "duree_totale_s": 1860,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 7,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 120
+              },
+              {
+                "kind": "walk",
+                "duree_s": 60
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 4,
+        "type": "EPI",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 5,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 120
+              },
+              {
+                "kind": "walk",
+                "duree_s": 60
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 5,
+        "type": "EC",
+        "effort": 4,
+        "duree_totale_s": 600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 600
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 20,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 600
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 3,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 600
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 1815,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 27,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 600
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 1860,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 7,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 600
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2085,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 33,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2040,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 8,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 600
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2085,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 33,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 5,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2040,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 8,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 7,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 5,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 5,
+        "type": "EC",
+        "effort": 8,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2040,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 8,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 5,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 5,
+        "type": "EC",
+        "effort": 5,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 10,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 2280,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 4,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 300
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 5,
+        "type": "EC",
+        "effort": 9,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 6,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 2280,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 4,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 300
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 5,
+        "type": "EC",
+        "effort": 9,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 40,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 10,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 4,
+        "type": "EPI",
+        "effort": 3,
+        "duree_totale_s": 1815,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 27,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 5,
+        "type": "EC",
+        "effort": 8,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 10,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 3,
+        "duree_totale_s": 2085,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 33,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 5,
+        "type": "RACE",
+        "effort": 10,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "race",
+            "duree_s": 1800
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "21km-clinique-v1",
+    "nom": "Courir un premier 21km",
+    "objectif_m": 21100,
+    "auteur": "Clinique du coureur",
+    "version": 1,
+    "semaines": 16,
+    "jours_par_semaine": 5,
+    "source": "https://cdn.therunningclinic.com/media/1092615/premier-21km.pdf",
+    "seances": [
+      {
+        "semaine": 1,
+        "jour": 1,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 3,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 600
+          }
+        ]
+      },
+      {
+        "semaine": 1,
+        "jour": 5,
+        "type": "EC",
+        "effort": 4,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 1,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 3,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 2,
+        "jour": 5,
+        "type": "EC",
+        "effort": 4,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2100
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 1,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 3,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 900,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 900
+          }
+        ]
+      },
+      {
+        "semaine": 3,
+        "jour": 5,
+        "type": "EC",
+        "effort": 4,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 1,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2100
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 3,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2100
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 4,
+        "jour": 5,
+        "type": "EC",
+        "effort": 4,
+        "duree_totale_s": 2700,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2700
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2985,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 53,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 3,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 5,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 3000,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 3000
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2985,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 53,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2100
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 3,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 6,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 3300,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 3300
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3300,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 60,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2100
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2940,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 13,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 7,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 3600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 3600
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3300,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 60,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 2940,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 13,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 8,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 4200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 4200
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3615,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 67,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3300,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 15,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 9,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 4800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 4800
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3930,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 74,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2700,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2700
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 7,
+        "duree_totale_s": 3300,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 9,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 10,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 5400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 5400
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3840,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 18,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 3000,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 3000
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 7,
+        "duree_totale_s": 3900,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 11,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 2100,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2100
+          }
+        ]
+      },
+      {
+        "semaine": 11,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 6000,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 6000
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3480,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 16,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3900,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 11,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 1200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1200
+          }
+        ]
+      },
+      {
+        "semaine": 12,
+        "jour": 5,
+        "type": "EC",
+        "effort": 6,
+        "duree_totale_s": 6600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 6600
+          }
+        ]
+      },
+      {
+        "semaine": 13,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 3480,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 16,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 13,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 3000,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 3000
+          }
+        ]
+      },
+      {
+        "semaine": 13,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 4380,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 9,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 300
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 13,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 13,
+        "jour": 5,
+        "type": "EC",
+        "effort": 9,
+        "duree_totale_s": 7200,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 7200
+          }
+        ]
+      },
+      {
+        "semaine": 14,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 3600,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 10,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 180
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 14,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 3000,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 3000
+          }
+        ]
+      },
+      {
+        "semaine": 14,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 4380,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 9,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 300
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 14,
+        "jour": 4,
+        "type": "EC",
+        "effort": 3,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 14,
+        "jour": 5,
+        "type": "EC",
+        "effort": 9,
+        "duree_totale_s": 5400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 5400
+          }
+        ]
+      },
+      {
+        "semaine": 15,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3615,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 67,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 15,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 2400,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 2400
+          }
+        ]
+      },
+      {
+        "semaine": 15,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 8,
+        "duree_totale_s": 3660,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 17,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 60
+              },
+              {
+                "kind": "walk",
+                "duree_s": 120
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 15,
+        "jour": 4,
+        "type": "EPI",
+        "effort": 3,
+        "duree_totale_s": 1815,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 27,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 15,
+        "jour": 5,
+        "type": "EC",
+        "effort": 8,
+        "duree_totale_s": 3600,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 3600
+          }
+        ]
+      },
+      {
+        "semaine": 16,
+        "jour": 1,
+        "type": "EPI",
+        "effort": 6,
+        "duree_totale_s": 3615,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 67,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 16,
+        "jour": 2,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1500,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1500
+          }
+        ]
+      },
+      {
+        "semaine": 16,
+        "jour": 3,
+        "type": "EPI",
+        "effort": 3,
+        "duree_totale_s": 2085,
+        "blocs": [
+          {
+            "kind": "warmup",
+            "duree_s": 300
+          },
+          {
+            "kind": "repeat",
+            "reps": 33,
+            "blocs": [
+              {
+                "kind": "run",
+                "duree_s": 15
+              },
+              {
+                "kind": "walk",
+                "duree_s": 30
+              }
+            ]
+          },
+          {
+            "kind": "cooldown",
+            "duree_s": 300
+          }
+        ]
+      },
+      {
+        "semaine": 16,
+        "jour": 4,
+        "type": "EC",
+        "effort": 2,
+        "duree_totale_s": 1800,
+        "blocs": [
+          {
+            "kind": "run",
+            "duree_s": 1800
+          }
+        ]
+      },
+      {
+        "semaine": 16,
+        "jour": 5,
+        "type": "RACE",
+        "effort": 10,
+        "duree_totale_s": 7200,
+        "blocs": [
+          {
+            "kind": "race",
+            "duree_s": 7200
+          }
+        ]
+      }
+    ]
+  }
+]

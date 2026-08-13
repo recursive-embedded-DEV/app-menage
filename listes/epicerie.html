@@ -5,30 +5,32 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>M&M app</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles.css">
   </head>
-  <body class="page-liste">
-    <header class="entete-app">
-      <h1>Listes</h1>
+  <body>
+    <header>
+      <a href="../listes.html">Retour</a>
+      <h1>Épicerie</h1>
     </header>
     <main>
       <ul>
         <li>
-          <a href="listes/epicerie.html">
-            <div>
-              <h2>Épicerie</h2>
-            </div>
-          </a>
+          <label><input type="checkbox"><span>Lait</span></label>
         </li>
         <li>
-          <a href="listes/week-end-QC.html">
-            <div>
-              <h2>Week-end à Québec</h2>
-            </div>
-          </a>
+          <label><input type="checkbox"><span>Pain</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox"><span>Oeufs</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox"><span>Café</span></label>
         </li>
       </ul>
-      <button type="button" class="fab" aria-label="Créer une liste">+</button>
+      <div class="ajout">
+        <input type="text" placeholder="Ajouter un article">
+        <button type="button">+</button>
+      </div>
     </main>
     <nav class="nav-bar">
       <ul>

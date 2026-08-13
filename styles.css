@@ -19,7 +19,33 @@ body {
 }
 
 
-/* === Composants partagés (entete-app, nav-bar, bouton-retour, barre-retour) === */
+/* === Composants partagés (entete-app, nav-bar, bouton, barre-retour) === */
+.barre-retour {
+    background-color: var(--fond-entete);
+    padding: 8px 12px;
+}
+
+.bouton {
+    display: inline-block;
+    background-color: var(--bouton);
+    border-radius: 8px;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+.bouton:hover {
+    background-color: var(--bouton-hover);
+}
+
+.bouton-liste {
+    width: 100%;
+}
+
 .entete-app {
     align-items: center;
     background-color: var(--fond-entete);
@@ -27,6 +53,29 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+.fab {
+    position: fixed;
+    bottom: 80px;
+    right: 16px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--bouton);
+    color: white;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 5px;
+}
+
+.fab:hover {
+    background-color: var(--bouton-hover);
 }
 
 .nav-bar {
@@ -115,27 +164,45 @@ input:checked + span {
     padding: 0;
 }
 
-
 /* === Pages de recette === */
-.bouton-retour {
-    display: inline-block;
-    background-color: var(--bouton);
-    border-radius: 8px;
-    color: white;
-    padding: 8px 16px;
-    text-decoration: none;
-    transition: background-color 0.2s;
-}
-
-.bouton-retour:hover {
-    background-color: var(--bouton-hover);
-}
-
 .entete-infos {
     align-items: center;
     display: flex;
     flex-direction: column;
     text-align: center;
+}
+
+.ingredients li {
+    border-bottom: 1px solid gray;
+    padding: 12px;
+}
+
+.ingredients ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.instructions li {
+    padding: 8px;
+}
+
+.meta {
+    display: flex;
+    padding: 12px;
+}
+
+.meta-item {
+    text-align: center;
+    padding: 0 12px;
+}
+
+.meta-item + .meta-item {
+    border-left: 1px solid var(--accent);
+}
+
+.meta-item p {
+    margin: 0;
 }
 
 .page-recette h2 {
@@ -164,21 +231,6 @@ input:checked + span {
     margin-bottom: 40px;
 }
 
-.ingredients ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.ingredients li {
-    border-bottom: 1px solid gray;
-    padding: 12px;
-}
-
-.instructions li {
-    padding: 8px;
-}
-
 .page-recette main {
     display: flex;
     flex-direction: column;
@@ -189,29 +241,6 @@ input:checked + span {
 .page-recette main h3 {
     font-weight: 400;
     text-transform: uppercase;
-}
-
-.meta {
-    display: flex;
-    padding: 12px;
-}
-
-.meta-item {
-    text-align: center;
-    padding: 0 12px;
-}
-
-.meta-item + .meta-item {
-    border-left: 1px solid var(--accent);
-}
-
-.meta-item p {
-    margin: 0;
-}
-
-.barre-retour {
-    background-color: var(--fond-entete);
-    padding: 8px 12px;
 }
 
 .specific {
