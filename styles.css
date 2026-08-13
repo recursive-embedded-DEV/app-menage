@@ -1,49 +1,32 @@
-.ajout {
-    display: flex;
-    gap: 8px;
-    padding-top: 8px;
+/* === Variables === */
+:root {
+    --accent: #1B3A5C;
+    --fond-entete: #F4F1EA;
+    --bouton: #2F6FB3;
+    --bouton-hover: #255A94;
 }
 
-.ajout input {
-    flex: 1;
+
+/* === Base === */ 
+* {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 body {
-    font-family: system-ui, sans-serif;
-    max-width: 400px;
     margin: 0 auto;
+    max-width: 400px;
     padding-bottom: 80px;
 }
 
-header {
+
+/* === Composants partagés (entete-app, nav-bar, bouton-retour, barre-retour) === */
+.entete-app {
     align-items: center;
-    display: flex;
-    gap: 12px;
-    justify-content: flex-start;
-}
-
-input:checked + span {
-    text-decoration: line-through;
-    color: gray;
-}
-
-main {
-    padding: 8px;
-}
-
-main li {
-    border: 1px solid lightgray;
-    border-radius: 8px;
-    padding: 8px;
-}
-
-main ul {
+    background-color: var(--fond-entete);
+    color: var(--accent);
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    justify-content: center;
 }
 
 .nav-bar {
@@ -64,7 +47,7 @@ main ul {
 }
 
 .nav-bar .active {
-    color: blue;
+    color: var(--bouton);
 }
 
 .nav-bar li {
@@ -77,4 +60,161 @@ main ul {
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+
+/* === listes.html === */
+.ajout {
+    display: flex;
+    gap: 8px;
+    padding-top: 8px;
+}
+
+.ajout input {
+    flex: 1;
+}
+
+input:checked + span {
+    text-decoration: line-through;
+    color: gray;
+}
+
+
+/* === Écran de liste === */
+.page-liste main {
+    padding: 8px;
+}
+
+.page-liste main a {
+    align-items: center;
+    color: var(--accent);
+    display: flex;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.page-liste main img {
+    border-radius: 8px;
+    height: 64px;
+    width: 64px;
+    object-fit: cover;
+}
+
+.page-liste main li {
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.page-liste main ul {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* === Pages de recette === */
+.bouton-retour {
+    display: inline-block;
+    background-color: var(--bouton);
+    border-radius: 8px;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.bouton-retour:hover {
+    background-color: var(--bouton-hover);
+}
+
+.entete-infos {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.page-recette h2 {
+   border-bottom: 1px solid var(--accent);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.page-recette h2::after {
+    content: "";
+    display: block;
+    width: 160px;
+    height: 3px;
+    background-color: var(--accent);
+}
+
+.page-recette header h1 {
+    padding: 12px;
+}
+
+.page-recette header img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 40px;
+    margin-bottom: 40px;
+}
+
+.ingredients ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ingredients li {
+    border-bottom: 1px solid gray;
+    padding: 12px;
+}
+
+.instructions li {
+    padding: 8px;
+}
+
+.page-recette main {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 16px;
+}
+
+.page-recette main h3 {
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.meta {
+    display: flex;
+    padding: 12px;
+}
+
+.meta-item {
+    text-align: center;
+    padding: 0 12px;
+}
+
+.meta-item + .meta-item {
+    border-left: 1px solid var(--accent);
+}
+
+.meta-item p {
+    margin: 0;
+}
+
+.barre-retour {
+    background-color: var(--fond-entete);
+    padding: 8px 12px;
+}
+
+.specific {
+    font-weight: 700;
+    white-space: nowrap;
 }
