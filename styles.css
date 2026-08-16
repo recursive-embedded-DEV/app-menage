@@ -102,6 +102,7 @@ body {
 }
 
 .nav-bar .active {
+    border-top: 2px solid var(--bouton);
     color: var(--bouton);
 }
 
@@ -239,6 +240,10 @@ input:checked + span {
 }
 
 /* === agenda.html === */ 
+.evenement-mathieu  { border-left: 4px solid #2F6FB3; }
+.evenement-mariana  { border-left: 4px solid #5EA88A; }
+.evenement-menage   { border-left: 4px solid #D8843C; }
+
 .page-agenda h2 {
     color: gray;
     font-size: 16px;
@@ -252,10 +257,6 @@ input:checked + span {
 .page-agenda h3, 
 .page-agenda p {
     margin: 0;
-}
-
-.page-agenda main li {
-    border-left: 4px solid var(--bouton);
 }
 
 .page-agenda p {
