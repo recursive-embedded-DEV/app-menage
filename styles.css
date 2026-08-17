@@ -262,3 +262,12 @@ input:checked + span {
 .page-agenda p {
     color: gray;
 }
+
+/* === Page de livre === */
+.page-livres main img {
+    width: 48px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
