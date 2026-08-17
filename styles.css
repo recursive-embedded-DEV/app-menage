@@ -271,3 +271,41 @@ input:checked + span {
     border-radius: 4px;
     flex-shrink: 0;
 }
+
+/* === Dialogue d'ajout (livres.html) === */ 
+#dialogue-livre {
+    border: none;
+    border-radius: 12px;
+    padding: 20px;
+    width: 90%;
+    max-width: 340px;
+}
+
+#dialogue-livre::backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+#form-livre {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#form-livre label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#form-livre input {
+    border: 1px solid lightgray;
+    border-radius: 6px;
+    font-size: inherit;
+    padding: 8px;
+}
+
+.dialogue-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
