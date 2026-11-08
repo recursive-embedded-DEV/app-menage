@@ -25,3 +25,4 @@ dist-ssr
 
 # Documentation personnelle (journal de bord, etc.)
 documentation/
+.vs/
