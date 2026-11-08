@@ -309,3 +309,16 @@ input:checked + span {
     gap: 8px;
     justify-content: flex-end;
 }
+
+/* === Vignette sans image (liste des recettes) === */
+.vignette-vide {
+    align-items: center;
+    background-color: var(--fond-entete);
+    border-radius: 8px;
+    display: flex;
+    flex-shrink: 0;
+    font-size: 28px;
+    height: 64px;
+    justify-content: center;
+    width: 64px;
+}
