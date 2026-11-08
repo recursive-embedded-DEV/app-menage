@@ -322,3 +322,30 @@ input:checked + span {
     justify-content: center;
     width: 64px;
 }
+
+/* === Listes à cocher (module Listes en React) === */
+.article {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+}
+
+    .article label {
+        align-items: center;
+        display: flex;
+        flex: 1;
+        gap: 8px;
+    }
+
+.bouton-supprimer {
+    background: none;
+    border: none;
+    color: gray;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 4px 8px;
+}
+
+.bouton-retirer {
+    margin-top: 12px;
+}

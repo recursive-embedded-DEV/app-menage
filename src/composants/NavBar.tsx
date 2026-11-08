@@ -1,16 +1,17 @@
-import { Link } from 'react-router'
+import { NavLink } from 'react-router'
 
 const BASE = import.meta.env.BASE_URL
 
-// Agenda et Listes sont encore des pages HTML statiques (dans public/) :
-// on y va avec un <a> ordinaire. Recettes est géré par React : <Link>.
+// Agenda est encore une page HTML statique (dans public/) : <a> ordinaire.
+// Listes et Recettes sont gérés par React : <NavLink>, qui ajoute tout seul
+// la classe "active" quand l'adresse correspond (ex. /listes/epicerie).
 export default function NavBar() {
   return (
     <nav className="nav-bar">
       <ul>
         <li><a href={`${BASE}agenda.html`}><span>📅</span>Agenda</a></li>
-        <li><a href={`${BASE}listes.html`}><span>✅</span>Listes</a></li>
-        <li><Link to="/recettes" className="active"><span>🍴</span>Recettes</Link></li>
+        <li><NavLink to="/listes"><span>✅</span>Listes</NavLink></li>
+        <li><NavLink to="/recettes"><span>🍴</span>Recettes</NavLink></li>
       </ul>
     </nav>
   )
