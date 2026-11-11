@@ -4,18 +4,14 @@ import { CLES_VALEURS, formaterValeur } from '../utils/nutrition'
 const LIBELLES = { kcal: 'Calories', proteines_g: 'Protéines', glucides_g: 'Glucides', lipides_g: 'Lipides' }
 
 interface Props {
-  valeur: ValeurRecette | null // null : en cours de calcul
-  erreur: boolean
+  valeur: ValeurRecette
 }
 
 // « Valeur nutritive par portion » (affichage seulement ; le calcul est fait
-// par useValeurRecette dans SectionNutritionRecette).
+// par valeurRecette dans SectionNutritionRecette).
 // Par portion de la recette de base : elle ne dépend pas du nombre de portions
 // choisi dans le sélecteur.
-export default function ValeurNutritive({ valeur, erreur }: Props) {
-  if (erreur) return <p className="message-erreur">Valeur nutritive indisponible. Vérifie ta connexion.</p>
-  if (!valeur) return <p className="note-portions">Calcul de la valeur nutritive…</p>
-
+export default function ValeurNutritive({ valeur }: Props) {
   return (
     <section className="valeur-nutritive">
       <h2>Valeur nutritive par portion</h2>

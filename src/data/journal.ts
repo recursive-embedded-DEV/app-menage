@@ -7,9 +7,13 @@ import { supabase } from './supabase'
 // Les règles RLS limitent tout au journal du membre connecté : aucune
 // requête n'a besoin de filtrer par user_id.
 
-// « aliment:aliments(…) » : PostgREST suit la clé étrangère aliment_id et
-// imbrique l'aliment (null pour une entrée « recette »).
-const COLONNES = `id, date, repas, quantite_texte, grammes, recette_id, portions, aliment:aliments(${COLONNES_ALIMENT})`
+// PostgREST suit les clés étrangères et imbrique, en UNE requête :
+//   - aliment:aliments(…)  pour une entrée « aliment » (null sinon) ;
+//   - recette:recettes(…)  pour une entrée « recette » (null sinon), avec ses
+//     ingrédients et l'aliment de chacun : de quoi calculer ses valeurs.
+const COLONNES = `id, date, repas, quantite_texte, grammes, recette_id, portions,
+  aliment:aliments(${COLONNES_ALIMENT}),
+  recette:recettes(titre, portions, ingredients:ingredients_recette(nom, grammes, aliment:aliments(${COLONNES_ALIMENT})))`
 
 // Forme brute d'une ligne renvoyée par Supabase.
 interface LigneJournal {
@@ -21,6 +25,7 @@ interface LigneJournal {
   recette_id: string | null
   portions: number | null
   aliment: Aliment | null
+  recette: { titre: string; portions: number; ingredients: { nom: string; grammes: number | null; aliment: Aliment | null }[] } | null
 }
 
 // Ligne brute → union discriminée (la base garantit qu'il y a l'un OU l'autre).
@@ -28,7 +33,17 @@ function versEntree(l: LigneJournal): EntreeJournal {
   const commun = { id: l.id, date: l.date, repas: l.repas, quantite_texte: l.quantite_texte }
   return l.aliment
     ? { ...commun, type: 'aliment', aliment: l.aliment, grammes: Number(l.grammes) }
-    : { ...commun, type: 'recette', recette_id: String(l.recette_id), portions: Number(l.portions) }
+    : {
+        ...commun,
+        type: 'recette',
+        recette_id: String(l.recette_id),
+        portions: Number(l.portions),
+        recette: l.recette && {
+          titre: l.recette.titre,
+          portions: Number(l.recette.portions),
+          ingredients: l.recette.ingredients.map((i) => ({ ...i, grammes: i.grammes === null ? null : Number(i.grammes) })),
+        },
+      }
 }
 
 export async function chargerJournal(date: string): Promise<EntreeJournal[]> {

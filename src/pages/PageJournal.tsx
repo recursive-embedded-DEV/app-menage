@@ -4,12 +4,11 @@ import NavBar from '../composants/NavBar'
 import Pastille from '../composants/Pastille'
 import DialogueAjoutJournal from '../composants/DialogueAjoutJournal'
 import DialogueRecetteJournal from '../composants/DialogueRecetteJournal'
-import { trouverRecette } from '../data/donnees'
 import { useJournal } from '../hooks/useJournal'
 import { useProfilNutrition } from '../hooks/useProfilNutrition'
 import type { EntreeJournal } from '../types/journal'
 import { dateLocale, decalerJours, estDateValide, formaterDateLongue } from '../utils/dates'
-import { CLES_VALEURS, REPAS, formaterValeur, totauxJournal, valeursEntree } from '../utils/nutrition'
+import { CLES_VALEURS, REPAS, formaterValeur, totauxJournal, valeurRecette, valeursEntree } from '../utils/nutrition'
 
 // #/nutrition (aujourd'hui) ou #/nutrition/2026-11-11 (un autre jour).
 export default function PageJournal() {
@@ -26,28 +25,26 @@ export default function PageJournal() {
 
 // Nom affiché d'une entrée : l'aliment, ou le titre de la recette.
 function nomEntree(e: EntreeJournal): string {
-  return e.type === 'aliment' ? e.aliment.nom : (trouverRecette(e.recette_id)?.titre ?? 'Recette introuvable')
+  return e.type === 'aliment' ? e.aliment.nom : (e.recette?.titre ?? 'Recette introuvable')
 }
 
 function Journal({ date, aujourdhui }: { date: string; aujourdhui: string }) {
-  const { entrees, parPortion, chargement, erreur, ajouter, modifier, supprimer } = useJournal(date)
+  const { entrees, chargement, erreur, ajouter, modifier, supprimer } = useJournal(date)
   const { profil } = useProfilNutrition()
   // null : boîte fermée ; { entree: null } : ajout d'un aliment ; { entree } : modification.
   const [dialogue, setDialogue] = useState<{ entree: EntreeJournal | null } | null>(null)
 
   // Totaux du jour : calculés à chaque affichage (jamais stockés).
-  const total = totauxJournal(entrees, parPortion)
+  const total = totauxJournal(entrees)
   const aucunObjectif = profil !== null && CLES_VALEURS.every((cle) => profil.objectifs[cle] === null)
 
   // Petit texte sous le nom : quantité et calories (ou « légume, non compté »).
   function detail(e: EntreeJournal): string {
     if (e.type === 'aliment' && e.aliment.legume_libre) return `${e.quantite_texte} · légume, non compté`
-    if (e.type === 'recette' && !parPortion.has(e.recette_id)) return `${e.quantite_texte} · calcul…`
-    return `${e.quantite_texte} · ${formaterValeur(valeursEntree(e, parPortion).kcal, 'kcal')} kcal`
+    return `${e.quantite_texte} · ${formaterValeur(valeursEntree(e).kcal, 'kcal')} kcal`
   }
 
   const enEdition = dialogue?.entree ?? null
-  const recetteEnEdition = enEdition?.type === 'recette' ? trouverRecette(enEdition.recette_id) : undefined
 
   return (
     <div className="page-journal">
@@ -94,7 +91,7 @@ function Journal({ date, aujourdhui }: { date: string; aujourdhui: string }) {
           return (
             <section key={cle} className="repas">
               <h3>
-                {libelle} <small>{formaterValeur(totauxJournal(duRepas, parPortion).kcal, 'kcal')} kcal</small>
+                {libelle} <small>{formaterValeur(totauxJournal(duRepas).kcal, 'kcal')} kcal</small>
               </h3>
               <ul>
                 {duRepas.map((e) => (
@@ -153,8 +150,8 @@ function Journal({ date, aujourdhui }: { date: string; aujourdhui: string }) {
       {/* Modification d'une entrée « recette » (portions, repas). */}
       {enEdition?.type === 'recette' && (
         <DialogueRecetteJournal
-          titre={recetteEnEdition?.titre ?? 'Recette introuvable'}
-          parPortion={parPortion.get(enEdition.recette_id) ?? null}
+          titre={enEdition.recette?.titre ?? 'Recette introuvable'}
+          parPortion={enEdition.recette && valeurRecette(enEdition.recette).parPortion}
           depart={{ portions: enEdition.portions, repas: enEdition.repas }}
           onEnregistrer={(choix) => modifier(enEdition.id, choix)}
           onFerme={() => setDialogue(null)}

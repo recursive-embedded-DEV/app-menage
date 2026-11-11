@@ -125,29 +125,38 @@ export function resumeValeurs(v: Valeurs): string {
 }
 
 // ---------------------------------------------------------------------
-// Valeur nutritive d'une recette (Phase C) : à partir des ingrédients liés à
-// un aliment du FCEN (champs fcen + grammes de recettes.json).
+// Valeur nutritive d'une recette : à partir des ingrédients reliés à un aliment
+// (aliment + grammes pour la recette de base, joints par Supabase).
 // ---------------------------------------------------------------------
 export interface ValeurRecette {
   total: Valeurs // recette de base complète
   parPortion: Valeurs // total ÷ portions de base
   legumes: string[] // ingrédients libres (légumes) : non comptés
-  exclus: string[] // sans aliment ou introuvables : non comptés
+  exclus: string[] // sans aliment (« au goût », eau…) : non comptés
 }
 
-export function valeurRecette(
-  recette: { portions: number; ingredients: { items: { nom: string; fcen?: number; grammes?: number }[] }[] },
-  alimentsParCode: Map<number, Valeurs & { legume_libre?: boolean }>,
-): ValeurRecette {
+// Ce dont le calcul a besoin : la forme la plus simple, pour servir à la fois
+// à la page de recette et aux recettes jointes dans le journal.
+export interface IngredientNutrition {
+  nom: string
+  aliment: (Valeurs & { legume_libre?: boolean }) | null
+  grammes: number | null
+}
+
+export interface RecetteNutrition {
+  portions: number
+  ingredients: IngredientNutrition[]
+}
+
+export function valeurRecette(recette: RecetteNutrition): ValeurRecette {
   const comptes: { aliment: Valeurs; grammes: number }[] = []
   const legumes: string[] = []
   const exclus: string[] = []
 
-  for (const ing of recette.ingredients.flatMap((g) => g.items)) {
-    const aliment = ing.fcen === undefined ? undefined : alimentsParCode.get(ing.fcen)
-    if (!aliment || !ing.grammes) exclus.push(ing.nom)
-    else if (aliment.legume_libre) legumes.push(ing.nom)
-    else comptes.push({ aliment, grammes: ing.grammes })
+  for (const ing of recette.ingredients) {
+    if (!ing.aliment || !ing.grammes) exclus.push(ing.nom)
+    else if (ing.aliment.legume_libre) legumes.push(ing.nom)
+    else comptes.push({ aliment: ing.aliment, grammes: ing.grammes })
   }
 
   const total = totaux(comptes)
@@ -166,21 +175,20 @@ export function valeurRecette(
 }
 
 // ---------------------------------------------------------------------
-// Journal avec recettes (Phase D) : une entrée est un aliment OU une recette.
+// Journal avec recettes : une entrée est un aliment OU une recette.
 // ---------------------------------------------------------------------
 const ZERO: Valeurs = { kcal: 0, proteines_g: 0, glucides_g: 0, lipides_g: 0 }
 
 type EntreeCalculable =
   | { type: 'aliment'; aliment: Valeurs & { legume_libre?: boolean }; grammes: number }
-  | { type: 'recette'; recette_id: string; portions: number }
+  | { type: 'recette'; portions: number; recette: RecetteNutrition | null }
 
-// Valeurs d'une entrée. Pour une recette : valeurs PAR PORTION (calculées par
-// valeurRecette, légumes libres déjà exclus) × nombre de portions.
-// Recette dont les valeurs ne sont pas encore chargées (ou disparue) : zéro.
-export function valeursEntree(e: EntreeCalculable, parPortion: Map<string, Valeurs>): Valeurs {
+// Valeurs d'une entrée. Pour une recette : valeurs PAR PORTION (valeurRecette,
+// légumes libres exclus) × nombre de portions. Recette disparue : zéro.
+export function valeursEntree(e: EntreeCalculable): Valeurs {
   if (e.type === 'aliment') return totaux([e])
-  const v = parPortion.get(e.recette_id)
-  if (!v) return ZERO
+  if (!e.recette) return ZERO
+  const v = valeurRecette(e.recette).parPortion
   return {
     kcal: v.kcal * e.portions,
     proteines_g: v.proteines_g * e.portions,
@@ -190,9 +198,9 @@ export function valeursEntree(e: EntreeCalculable, parPortion: Map<string, Valeu
 }
 
 // Total de plusieurs entrées du journal (un repas, une journée).
-export function totauxJournal(entrees: EntreeCalculable[], parPortion: Map<string, Valeurs>): Valeurs {
+export function totauxJournal(entrees: EntreeCalculable[]): Valeurs {
   return entrees.reduce((somme, e) => {
-    const v = valeursEntree(e, parPortion)
+    const v = valeursEntree(e)
     return {
       kcal: somme.kcal + v.kcal,
       proteines_g: somme.proteines_g + v.proteines_g,

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { ajusterQuantite, aUneQuantite, formaterFraction, lireNombre, texteArticle } from './portions'
 
-// Les cas viennent des vraies quantités de src/data/recettes.json.
+// Les cas viennent des vraies quantités des recettes (migrées dans Supabase).
 // Lancer : npm test   (ou npx vitest pour relancer à chaque modification)
 
 describe('lireNombre', () => {

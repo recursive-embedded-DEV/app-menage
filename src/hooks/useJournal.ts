@@ -1,20 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Valeurs } from '../types/aliment'
+import { useCallback, useEffect, useState } from 'react'
 import type { ChangementsEntree, EntreeJournal, NouvelleEntree } from '../types/journal'
-import { chargerAlimentsFcen } from '../data/aliments'
-import { trouverRecette } from '../data/donnees'
 import { ajouterEntree, chargerJournal, modifierEntree, supprimerEntree } from '../data/journal'
-import { valeurRecette } from '../utils/nutrition'
 
 // Journal d'UNE journée. La page le recrée (key={date}) quand on change de
 // jour : l'état repart à zéro, avec « Chargement… », sans logique de remise à zéro.
 // Pas de temps réel : le journal est privé, un seul membre le modifie.
+// Chaque entrée « recette » arrive avec sa recette et ses aliments (une seule
+// requête) : les valeurs sont calculées directement par l'écran.
 export function useJournal(date: string) {
   const [entrees, setEntrees] = useState<EntreeJournal[]>([])
   const [chargement, setChargement] = useState(true)
   const [erreur, setErreur] = useState<string | null>(null)
-  // Valeurs d'UNE portion de chaque recette consommée ce jour-là (par id).
-  const [parPortion, setParPortion] = useState<Map<string, Valeurs>>(new Map())
 
   const recharger = useCallback(() => {
     chargerJournal(date)
@@ -29,32 +25,6 @@ export function useJournal(date: string) {
   useEffect(() => {
     recharger()
   }, [recharger])
-
-  // Ids des recettes du jour, sous forme de texte stable (« banh-mi,potage ») :
-  // l'effet suivant ne se relance que si cette liste change vraiment.
-  const idsRecettes = useMemo(
-    () => [...new Set(entrees.flatMap((e) => (e.type === 'recette' ? [e.recette_id] : [])))].sort().join(','),
-    [entrees],
-  )
-
-  // Valeurs des recettes : tous leurs ingrédients en UNE requête d'aliments,
-  // puis valeurRecette (légumes libres exclus) pour chacune.
-  useEffect(() => {
-    const recettes = idsRecettes
-      .split(',')
-      .filter(Boolean)
-      .flatMap((id) => {
-        const r = trouverRecette(id)
-        return r ? [r] : []
-      })
-    if (recettes.length === 0) return
-    const codes = [
-      ...new Set(recettes.flatMap((r) => r.ingredients.flatMap((g) => g.items.flatMap((i) => (i.fcen === undefined ? [] : [i.fcen]))))),
-    ]
-    chargerAlimentsFcen(codes)
-      .then((aliments) => setParPortion(new Map(recettes.map((r) => [r.id, valeurRecette(r, aliments).parPortion]))))
-      .catch(() => setErreur('Impossible de calculer les recettes du jour. Vérifie ta connexion.'))
-  }, [idsRecettes])
 
   // Ajout et modification : on attend la réponse de Supabase, qui renvoie
   // l'entrée complète. Renvoient true en cas de succès (la boîte se ferme).
@@ -90,5 +60,5 @@ export function useJournal(date: string) {
     })
   }
 
-  return { entrees, parPortion, chargement, erreur, ajouter, modifier, supprimer }
+  return { entrees, chargement, erreur, ajouter, modifier, supprimer }
 }

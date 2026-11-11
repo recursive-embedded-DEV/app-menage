@@ -4,27 +4,14 @@ import { supabase } from './supabase'
 // Le SEUL fichier qui sait où sont les aliments : la table public.aliments
 // de Supabase (FCEN de Santé Canada + aliments perso du ménage).
 
-// Colonnes utiles à l'app (la table a aussi code_fcen, auteur_id, nom_normalise…).
-// Exportées : le journal les réutilise pour joindre l'aliment de chaque entrée.
+// Colonnes utiles à l'app (la table a aussi code_fcen, nom_normalise…).
+// Exportées : le journal et les recettes les réutilisent pour joindre l'aliment.
 export const COLONNES_ALIMENT =
   'id, source, nom, groupe, kcal, proteines_g, glucides_g, lipides_g, mesures, legume_libre, auteur_id'
 
-// Erreur précise : l'aliment est utilisé dans un journal (ou une recette).
+// Erreur précise : l'aliment est utilisé dans un journal ou une recette.
 // La base refuse la suppression (clé étrangère « on delete restrict »).
 export class AlimentUtilise extends Error {}
-
-// Aliments du FCEN par leurs codes (ingrédients d'une recette), en UNE requête.
-// Renvoie une table code FCEN → aliment.
-export async function chargerAlimentsFcen(codes: number[]): Promise<Map<number, Aliment>> {
-  if (codes.length === 0) return new Map()
-  const { data, error } = await supabase
-    .from('aliments')
-    .select(`${COLONNES_ALIMENT}, code_fcen`)
-    .in('code_fcen', codes)
-  if (error) throw error
-  const lignes = data as (Aliment & { code_fcen: number })[]
-  return new Map(lignes.map(({ code_fcen, ...aliment }) => [code_fcen, aliment]))
-}
 
 // Appelle la fonction SQL rechercher_aliments (supabase/nutrition.sql) :
 // mots dans n'importe quel ordre, sans tenir compte des accents, 20 résultats.

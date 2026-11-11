@@ -1,6 +1,6 @@
 // Ajustement des quantités d'une recette selon le nombre de portions.
 //
-// Les quantités de recettes.json sont du TEXTE LIBRE ("450 g", "1 1/4 c. à thé",
+// Les quantités des recettes sont du TEXTE LIBRE ("450 g", "1 1/4 c. à thé",
 // "Au goût"…). Plutôt que de restructurer les 9 recettes, on lit les nombres
 // dans le texte, on les multiplie, et on réécrit le texte. Le résultat est
 // CALCULÉ à l'affichage, jamais stocké (convention du projet).

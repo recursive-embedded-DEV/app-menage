@@ -65,9 +65,25 @@ export default defineConfig(({ command, isPreview }) => ({
                             expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 }, // 30 jours
                         },
                     },
+                    // RECETTES (exception assumée, décision de Mathieu) : elles sont
+                    // publiques et doivent rester consultables hors ligne, comme quand
+                    // elles étaient dans le code. NetworkFirst : le réseau d'abord ;
+                    // sans réponse en 4 s (ou hors ligne), la dernière version en cache.
+                    // Workbox ne met en cache que les requêtes GET (les lectures).
+                    {
+                        urlPattern: ({ url }) =>
+                            url.hostname.endsWith('.supabase.co') && url.pathname.startsWith('/rest/v1/recettes'),
+                        handler: 'NetworkFirst',
+                        options: {
+                            cacheName: 'recettes',
+                            networkTimeoutSeconds: 4,
+                            expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 30 }, // 30 jours
+                            cacheableResponse: { statuses: [200] },
+                        },
+                    },
                 ],
-                // Supabase (API, authentification, temps réel) : aucune règle, donc
-                // AUCUN cache. Les listes partagées viennent toujours du serveur.
+                // Le reste de Supabase (listes, journal, aliments, authentification,
+                // temps réel) : aucune règle, donc AUCUN cache.
             },
         }),
     ],

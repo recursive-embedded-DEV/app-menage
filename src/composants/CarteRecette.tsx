@@ -1,9 +1,9 @@
 import { Link } from 'react-router'
-import type { Recette } from '../types/recette'
+import type { ResumeRecette } from '../types/recette'
 import { cheminImage, formaterDuree, tempsTotal } from '../utils/temps'
 
 interface Props {
-  recette: Recette
+  recette: ResumeRecette // la liste ne charge pas les ingrédients ni les étapes
 }
 
 export default function CarteRecette({ recette }: Props) {

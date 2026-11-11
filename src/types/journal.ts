@@ -1,4 +1,5 @@
 import type { Aliment, Valeurs } from './aliment'
+import type { IngredientNutrition } from '../utils/nutrition'
 
 export type Repas = 'dejeuner' | 'diner' | 'souper' | 'collation'
 
@@ -19,8 +20,11 @@ export interface EntreeAliment extends EntreeCommune {
 
 export interface EntreeRecette extends EntreeCommune {
   type: 'recette'
-  recette_id: string // id dans src/data/recettes.json
+  recette_id: string // id dans la table recettes
   portions: number
+  // La recette, jointe par Supabase (clé étrangère journal.recette_id) avec ses
+  // ingrédients et leurs aliments : tout ce qu'il faut pour calculer ses valeurs.
+  recette: { titre: string; portions: number; ingredients: IngredientNutrition[] } | null
 }
 
 export type EntreeJournal = EntreeAliment | EntreeRecette

@@ -1,19 +1,24 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import type { Recette } from '../types/recette'
 import type { Repas } from '../types/journal'
 import { ajouterEntree } from '../data/journal'
 import { useOngletNutrition } from '../hooks/useOngletNutrition'
-import { useValeurRecette } from '../hooks/useValeurRecette'
 import { dateLocale } from '../utils/dates'
+import { valeurRecette } from '../utils/nutrition'
 import DialogueRecetteJournal from './DialogueRecetteJournal'
 import ValeurNutritive from './ValeurNutritive'
 
 // Partie « nutrition » de la page de recette (membres connectés seulement) :
 // la valeur nutritive par portion, et « J'en ai mangé » pour ceux qui ont
-// activé le module Nutrition. Le calcul est fait UNE fois et partagé.
+// activé le module Nutrition.
+// Les aliments sont déjà joints aux ingrédients par Supabase : le calcul est
+// immédiat, sans requête de plus (useMemo : refait seulement si la recette change).
 export default function SectionNutritionRecette({ recette }: { recette: Recette }) {
-  const { valeur, erreur } = useValeurRecette(recette)
+  const valeur = useMemo(
+    () => valeurRecette({ portions: recette.portions, ingredients: recette.ingredients.flatMap((g) => g.items) }),
+    [recette],
+  )
   const moduleActif = useOngletNutrition()
   const [ouvert, setOuvert] = useState(false)
   const [confirmation, setConfirmation] = useState<string | null>(null)
@@ -34,7 +39,7 @@ export default function SectionNutritionRecette({ recette }: { recette: Recette 
 
   return (
     <>
-      <ValeurNutritive valeur={valeur} erreur={erreur} />
+      <ValeurNutritive valeur={valeur} />
       {moduleActif && (
         <button
           type="button"
@@ -56,7 +61,7 @@ export default function SectionNutritionRecette({ recette }: { recette: Recette 
       {ouvert && (
         <DialogueRecetteJournal
           titre={recette.titre}
-          parPortion={valeur?.parPortion ?? null}
+          parPortion={valeur.parPortion}
           onEnregistrer={enregistrer}
           onFerme={() => setOuvert(false)}
         />

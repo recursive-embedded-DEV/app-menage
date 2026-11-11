@@ -1,15 +1,19 @@
 // Types du module Recettes.
-// Ils décrivent la forme exacte des objets de src/data/recettes.json.
-// Si le JSON s'écarte de cette forme, TypeScript le signale dans VS Code.
+// Les recettes sont dans Supabase (tables recettes et ingredients_recette) ;
+// data/donnees.ts les convertit dans cette forme pour les composants.
+
+import type { Aliment } from './aliment'
 
 export interface Ingredient {
   nom: string;
   quantite: string; // texte libre : "450 g", "1/2 tasse", "Au goût"
   // Lien vers la base d'aliments (module Nutrition), pour la recette DE BASE :
-  // code de l'aliment dans le FCEN et poids en grammes. Absents = ingrédient
-  // exclu du calcul (« Au goût », eau, aliment introuvable…).
-  fcen?: number;
-  grammes?: number;
+  // l'aliment (FCEN ou perso) et son poids. null = exclu du calcul
+  // (« Au goût », eau…). L'aliment n'est joint que pour un membre connecté
+  // (la table aliments est protégée par RLS) ; sinon il vaut null.
+  aliment: Aliment | null;
+  aliment_id: number | null;
+  grammes: number | null;
 }
 
 // Générique : le même moule sert pour les ingrédients et pour les étapes.
@@ -36,3 +40,6 @@ export interface Recette {
   etapes: Groupe<string>[];
   notes: string[];
 }
+
+// Ce qu'affiche la liste des recettes (sans ingrédients ni étapes : plus léger).
+export type ResumeRecette = Pick<Recette, 'id' | 'titre' | 'image' | 'temps' | 'rendement'>;

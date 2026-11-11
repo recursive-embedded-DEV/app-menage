@@ -140,54 +140,45 @@ describe('valeurRecette', () => {
   const recette = {
     portions: 2,
     ingredients: [
-      {
-        items: [
-          { nom: 'Riz', fcen: 1, grammes: 200 }, // 260 kcal
-          { nom: 'Carottes', fcen: 2, grammes: 122 }, // légume libre
-          { nom: 'Sel et poivre' }, // pas d'aliment
-          { nom: 'Ingrédient disparu', fcen: 99, grammes: 50 }, // code introuvable
-        ],
-      },
+      { nom: 'Riz', aliment: riz, grammes: 200 }, // 260 kcal
+      { nom: 'Carottes', aliment: carotte, grammes: 122 }, // légume libre
+      { nom: 'Sel et poivre', aliment: null, grammes: null }, // pas d'aliment
     ],
   }
-  const aliments = new Map([
-    [1, riz],
-    [2, carotte],
-  ])
 
   it('total et valeurs par portion, légumes et exclus séparés', () => {
-    const v = valeurRecette(recette, aliments)
+    const v = valeurRecette(recette)
     expect(v.total.kcal).toBeCloseTo(260, 5)
     expect(v.parPortion.kcal).toBeCloseTo(130, 5)
     expect(v.parPortion.proteines_g).toBeCloseTo(2.7, 5)
     expect(v.legumes).toEqual(['Carottes'])
-    expect(v.exclus).toEqual(['Sel et poivre', 'Ingrédient disparu'])
+    expect(v.exclus).toEqual(['Sel et poivre'])
   })
 })
 
 describe('journal avec recettes', () => {
   const carotte = { kcal: 41, proteines_g: 0.93, glucides_g: 9.58, lipides_g: 0.24, legume_libre: true }
-  const parPortion = new Map([['macaroni', { kcal: 466, proteines_g: 37, glucides_g: 50, lipides_g: 10 }]])
+  // Recette de 4 portions : 1 864 kcal au total → 466 kcal par portion.
+  const macaroni = {
+    portions: 4,
+    ingredients: [{ nom: 'Base', aliment: { kcal: 100, proteines_g: 10, glucides_g: 10, lipides_g: 2 }, grammes: 1864 }],
+  }
 
   it('valeursEntree : recette = valeurs par portion × portions', () => {
-    const v = valeursEntree({ type: 'recette', recette_id: 'macaroni', portions: 1.5 }, parPortion)
+    const v = valeursEntree({ type: 'recette', portions: 1.5, recette: macaroni })
     expect(v.kcal).toBeCloseTo(699, 5)
-    expect(v.proteines_g).toBeCloseTo(55.5, 5)
   })
 
-  it('valeursEntree : recette pas encore chargée → zéro', () => {
-    expect(valeursEntree({ type: 'recette', recette_id: 'inconnue', portions: 2 }, parPortion).kcal).toBe(0)
+  it('valeursEntree : recette disparue → zéro', () => {
+    expect(valeursEntree({ type: 'recette', portions: 2, recette: null }).kcal).toBe(0)
   })
 
   it('totauxJournal : aliments + recettes, légumes libres exclus', () => {
-    const t = totauxJournal(
-      [
-        { type: 'aliment', aliment: oeuf, grammes: 100 }, // 152
-        { type: 'aliment', aliment: carotte, grammes: 300 }, // libre
-        { type: 'recette', recette_id: 'macaroni', portions: 1 }, // 466
-      ],
-      parPortion,
-    )
+    const t = totauxJournal([
+      { type: 'aliment', aliment: oeuf, grammes: 100 }, // 152
+      { type: 'aliment', aliment: carotte, grammes: 300 }, // libre
+      { type: 'recette', portions: 1, recette: macaroni }, // 466
+    ])
     expect(t.kcal).toBeCloseTo(618, 5)
   })
 

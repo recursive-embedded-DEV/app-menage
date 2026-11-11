@@ -40,7 +40,7 @@ export default function PageAliments() {
       setConfirmerSuppression(false)
       setErreurSuppression(
         e instanceof AlimentUtilise
-          ? 'Cet aliment est utilisé dans un journal : il ne peut pas être supprimé. Modifie-le plutôt.'
+          ? 'Cet aliment est utilisé dans un journal ou une recette : il ne peut pas être supprimé. Modifie-le plutôt.'
           : "L'aliment n'a pas été supprimé. Vérifie ta connexion.",
       )
     }

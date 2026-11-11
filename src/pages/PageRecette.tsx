@@ -4,16 +4,21 @@ import NavBar from '../composants/NavBar'
 import DialogueEpicerie from '../composants/DialogueEpicerie'
 import SelecteurPortions from '../composants/SelecteurPortions'
 import SectionNutritionRecette from '../composants/SectionNutritionRecette'
-import { trouverRecette } from '../data/donnees'
 import { useConnexion } from '../hooks/useConnexion'
+import { useRecette } from '../hooks/useRecettes'
 import type { Recette } from '../types/recette'
 import { ajusterQuantite } from '../utils/portions'
 import { cheminImage, formaterDuree } from '../utils/temps'
 
 export default function PageRecette() {
   // :id dans la route "/recettes/:id" → ex. "banh-mi"
-  const { id } = useParams()
-  const recette = id ? trouverRecette(id) : undefined
+  const { id = '' } = useParams()
+  // key={id} : une autre recette = un chargement neuf.
+  return <ChargementRecette key={id} id={id} />
+}
+
+function ChargementRecette({ id }: { id: string }) {
+  const { recette, chargement, erreur } = useRecette(id)
 
   if (!recette) {
     return (
@@ -22,7 +27,9 @@ export default function PageRecette() {
           <Link to="/recettes" className="bouton">← Retour</Link>
         </nav>
         <main>
-          <p>Cette recette n'existe pas.</p>
+          {chargement && <p>Chargement…</p>}
+          {erreur && <p className="message-erreur">Impossible de charger la recette. Vérifie ta connexion.</p>}
+          {!chargement && !erreur && <p>Cette recette n'existe pas.</p>}
         </main>
         <NavBar />
       </div>

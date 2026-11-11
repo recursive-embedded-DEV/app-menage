@@ -8,8 +8,9 @@ export function formaterDuree(minutes: number): string {
   return reste === 0 ? `${heures} h` : `${heures} h ${String(reste).padStart(2, '0')}`
 }
 
-// Donnée dérivée : calculée, jamais stockée dans le JSON.
-export function tempsTotal(recette: Recette): number {
+// Donnée dérivée : calculée, jamais stockée dans la base.
+// Pick : seul le champ temps est nécessaire (sert aussi au résumé de la liste).
+export function tempsTotal(recette: Pick<Recette, 'temps'>): number {
   const t = recette.temps
   return t.preparation_min + t.cuisson_min + t.repos_min
 }
