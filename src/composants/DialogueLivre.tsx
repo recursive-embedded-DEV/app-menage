@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Livre } from '../types/liste'
 import { chercherInfosLivre } from '../data/couvertures'
-import { extraireAsin, isbn13VersIsbn10, isbnDepuisLien, lienAmazon, nettoyerIsbn } from '../utils/livres'
+import { lireCodeBarresDansPhoto } from '../utils/lecture-code-barres'
+import { estIsbn13, extraireAsin, isbn13VersIsbn10, isbnDepuisLien, lienAmazon, nettoyerIsbn } from '../utils/livres'
 import { cheminImage } from '../utils/temps'
 import ScanneurCodeBarres from './ScanneurCodeBarres'
 
@@ -34,6 +35,8 @@ export default function DialogueLivre({ livre, categories, onEnregistrer, onSupp
   const [recherche, setRecherche] = useState<'repos' | 'en-cours' | 'rien'>('repos')
   const [confirmer, setConfirmer] = useState(false)
   const [scanner, setScanner] = useState(false) // caméra ouverte ?
+  // Lecture d'une photo du code-barres (appareil photo natif).
+  const [photo, setPhoto] = useState<'repos' | 'lecture' | 'illisible'>('repos')
 
   useEffect(() => {
     dialogue.current?.showModal()
@@ -94,6 +97,23 @@ export default function DialogueLivre({ livre, categories, onEnregistrer, onSupp
     chercher({ isbn: isbn13, titre: champs.titre, auteur: champs.auteur, lien }, false)
   }
 
+  // Photo prise avec l'appareil photo NATIF : il gère la mise au point et le
+  // mode macro, ce qu'une page web ne peut pas faire avec la caméra en direct.
+  function lirePhoto(fichier: File | undefined) {
+    if (!fichier) return
+    setPhoto('lecture')
+    lireCodeBarresDansPhoto(fichier)
+      .then((code) => {
+        if (code && estIsbn13(code)) {
+          setPhoto('repos')
+          codeDetecte(code)
+        } else {
+          setPhoto('illisible')
+        }
+      })
+      .catch(() => setPhoto('illisible'))
+  }
+
   function soumettre(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     onEnregistrer({
@@ -117,9 +137,31 @@ export default function DialogueLivre({ livre, categories, onEnregistrer, onSupp
         {scanner ? (
           <ScanneurCodeBarres onDetecte={codeDetecte} onAnnuler={() => setScanner(false)} />
         ) : (
-          <button type="button" className="bouton" onClick={() => setScanner(true)}>
-            📷 Scanner le code-barres
-          </button>
+          <div className="ajouts-ingredient">
+            <button type="button" className="bouton" onClick={() => setScanner(true)}>
+              📷 Scanner le code-barres
+            </button>
+            {/* Solution de rechange : un <label> qui ouvre l'appareil photo natif.
+                capture="environment" : directement la caméra arrière. */}
+            <label className="bouton">
+              {photo === 'lecture' ? 'Lecture…' : '📸 Photo du code-barres'}
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                hidden
+                onChange={(e) => {
+                  lirePhoto(e.target.files?.[0])
+                  e.target.value = '' // permet de reprendre la même photo
+                }}
+              />
+            </label>
+          </div>
+        )}
+        {photo === 'illisible' && (
+          <p className="note-portions">
+            Code-barres illisible : reprends la photo bien droite et nette, le code au centre, ou tape l'ISBN.
+          </p>
         )}
         <label>
           Lien Amazon <small>(le coller remplit le reste s'il s'agit d'un livre imprimé)</small>

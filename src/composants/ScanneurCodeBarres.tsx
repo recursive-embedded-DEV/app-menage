@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { ameliorerCamera, creerLecteur } from '../utils/lecture-code-barres'
 import { estIsbn13 } from '../utils/livres'
 
 interface Props {
@@ -48,13 +49,15 @@ export default function ScanneurCodeBarres({ onDetecte, onAnnuler }: Props) {
 
     if (!cameraPossible()) return
 
-    Promise.all([import('@zxing/browser'), import('@zxing/library')])
-      .then(([{ BrowserMultiFormatReader }, { BarcodeFormat, DecodeHintType }]) => {
+    creerLecteur()
+      .then((lecteur) => {
         if (fini || !video.current) return null
-        // Seulement l'EAN-13 : lecture plus rapide, moins d'erreurs.
-        const indices = new Map([[DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13]]])
-        const lecteur = new BrowserMultiFormatReader(indices)
-        return lecteur.decodeFromConstraints({ video: { facingMode: 'environment' } }, video.current, (resultat) => {
+        // Full HD demandée : sans précision, le navigateur donne souvent du
+        // 640 × 480, où le code-barres n'est lisible que TRÈS près… là où la
+        // caméra ne fait plus la mise au point (flou). En haute résolution, il
+        // reste lisible de plus loin, à une distance où l'image est nette.
+        const contraintes = { video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } }
+        return lecteur.decodeFromConstraints(contraintes, video.current, (resultat) => {
           if (!resultat || fini) return // rien de lisible dans cette image : on continue
           const code = resultat.getText()
           if (!estIsbn13(code)) {
@@ -70,8 +73,12 @@ export default function ScanneurCodeBarres({ onDetecte, onAnnuler }: Props) {
       .then((c) => {
         if (!c) return
         controles = c
-        if (fini) c.stop() // démonté pendant le démarrage
-        else setEtat('actif')
+        if (fini) {
+          c.stop() // démonté pendant le démarrage
+          return
+        }
+        if (video.current) ameliorerCamera(video.current) // mise au point continue, zoom
+        setEtat('actif')
       })
       .catch((erreur) => {
         if (fini) return
@@ -106,7 +113,7 @@ export default function ScanneurCodeBarres({ onDetecte, onAnnuler }: Props) {
       </div>
       <p className="note-portions" role="status">
         {etat === 'demarrage' && 'Ouverture de la caméra…'}
-        {etat === 'actif' && !message && 'Vise le code-barres au dos du livre.'}
+        {etat === 'actif' && !message && 'Tiens le livre à environ 20 cm : le code-barres n’a pas besoin de remplir l’écran.'}
         {message}
       </p>
       <button type="button" className="bouton-discret" onClick={onAnnuler}>
