@@ -12,12 +12,42 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+/* La PAGE ne défile jamais : c'est #root qui défile.
+   Pourquoi : depuis iOS 26, Safari (et les apps installées) décale ou fait
+   défiler les éléments position: fixed (barre de navigation, bouton +) quand
+   le document défile (bogue WebKit 297779). Si le document ne bouge pas, ces
+   éléments restent en bas de l'écran. */
+html,
 body {
-    margin: 0 auto;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+}
+
+#root {
+    height: 100%;
+    overflow-y: auto;
+    /* Le défilement s'arrête au bord de #root (pas de rebond de la page). */
+    overscroll-behavior-y: contain;
+}
+
+/* Chaque page : 400 px au plus, centrée (mobile d'abord). */
+#root > * {
+    margin-left: auto;
+    margin-right: auto;
     max-width: 400px;
-    /* env(safe-area-inset-bottom) : hauteur de la barre d'accueil de l'iPhone
-       (environ 34 px en PWA plein écran ; 0 partout ailleurs). */
-    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Espace sous le contenu pour qu'il ne finisse pas caché sous la barre de
+   navigation. env(safe-area-inset-bottom) : hauteur de la barre d'accueil de
+   l'iPhone (environ 34 px en PWA plein écran ; 0 partout ailleurs). */
+#root::after {
+    content: '';
+    display: block;
+    height: calc(80px + env(safe-area-inset-bottom, 0px));
 }
 
 /* TOUS les champs à 16 px minimum. En dessous, Safari sur iPhone ZOOME
