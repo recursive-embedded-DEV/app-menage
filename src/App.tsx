@@ -1,10 +1,16 @@
+import { lazy, Suspense } from 'react'
 import { HashRouter, Routes, Route, Navigate } from 'react-router'
-import ListeRecettes from './pages/ListeRecettes'
-import PageRecette from './pages/PageRecette'
-import ListesAccueil from './pages/ListesAccueil'
-import PageListe from './pages/PageListe'
-import RouteProtegee from './composants/RouteProtegee'
 import BanniereMiseAJour from './composants/BanniereMiseAJour'
+
+// DÉCOUPAGE DU CODE : chaque page est un fichier JavaScript séparé, téléchargé
+// seulement quand on la visite. import() dynamique = point de découpe pour Vite.
+// RouteProtegee aussi : il importe la connexion, donc tout supabase-js ; importé
+// normalement, il ferait entrer Supabase dans le fichier principal.
+const ListeRecettes = lazy(() => import('./pages/ListeRecettes'))
+const PageRecette = lazy(() => import('./pages/PageRecette'))
+const ListesAccueil = lazy(() => import('./pages/ListesAccueil'))
+const PageListe = lazy(() => import('./pages/PageListe'))
+const RouteProtegee = lazy(() => import('./composants/RouteProtegee'))
 
 // Le « standard » de l'app : quelle adresse affiche quelle page.
 // HashRouter met la route après un # (ex. index.html#/listes/epicerie),
@@ -14,6 +20,9 @@ export default function App() {
     <HashRouter>
       {/* Hors des <Routes> : visible sur toutes les pages. */}
       <BanniereMiseAJour />
+      {/* Affiché pendant le téléchargement d'une page (une fraction de seconde ;
+          instantané une fois l'app installée, car tout est pré-caché). */}
+      <Suspense fallback={<p className="chargement-page">Chargement…</p>}>
       <Routes>
         <Route path="/" element={<Navigate to="/listes" replace />} />
         {/* Listes : réservées aux membres du ménage connectés */}
@@ -24,6 +33,7 @@ export default function App() {
         {/* Toute autre adresse : retour aux listes */}
         <Route path="*" element={<Navigate to="/listes" replace />} />
       </Routes>
+      </Suspense>
     </HashRouter>
   )
 }

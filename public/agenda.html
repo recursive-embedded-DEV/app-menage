@@ -2,7 +2,15 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Page statique : Vite ne réécrit pas ses chemins. Ils doivent donc être
+         RELATIFS (sans / au début), sinon ils pointeraient hors de /app-menage/. -->
+    <link rel="icon" href="favicon.ico" sizes="48x48">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any">
+    <link rel="apple-touch-icon" href="apple-touch-icon-180x180.png">
+    <meta name="theme-color" content="#F4F1EA">
+    <!-- viewport-fit=cover : nécessaire pour que env(safe-area-inset-bottom) de
+         styles.css garde la barre de navigation au-dessus de la barre d'accueil (iPhone). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Agenda</title>
     <link rel="stylesheet" href="styles.css">
 </head>
