@@ -25,7 +25,8 @@ export interface Recette {
     cuisson_min: number;
     repos_min: number;
   };
-  rendement: string;
+  rendement: string; // texte affiché tel quel : "8 à 10 tranches", "1 pain"
+  portions: number;  // base du calcul des quantités (src/utils/portions.ts)
   ingredients: Groupe<Ingredient>[];
   etapes: Groupe<string>[];
   notes: string[];

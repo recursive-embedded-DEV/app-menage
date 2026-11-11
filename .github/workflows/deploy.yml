@@ -24,6 +24,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # Tests unitaires (Vitest) : un échec arrête le déploiement,
+      # et le site en ligne garde la version précédente.
+      - run: npm test
       # Vite intègre les variables VITE_… dans le JavaScript AU MOMENT DU BUILD :
       # elles doivent donc être fournies ici, à partir des secrets du dépôt.
       - name: Build

@@ -51,6 +51,12 @@ export async function insererArticle(listeId: string, article: Article): Promise
   verifier(await supabase.from('articles').insert({ ...article, liste_id: listeId }))
 }
 
+// Plusieurs articles d'un coup (ex. ingrédients d'une recette) : UNE seule
+// requête réseau, et tous réussissent ou échouent ensemble.
+export async function insererArticles(listeId: string, articles: Article[]): Promise<void> {
+  verifier(await supabase.from('articles').insert(articles.map((a) => ({ ...a, liste_id: listeId }))))
+}
+
 export async function modifierCoche(articleId: string, coche: boolean): Promise<void> {
   verifier(await supabase.from('articles').update({ coche }).eq('id', articleId))
 }
