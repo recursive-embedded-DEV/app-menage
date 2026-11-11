@@ -9,7 +9,8 @@ import { reduireImage } from '../utils/images'
 import { cheminImage } from '../utils/temps'
 import { useRecette } from '../hooks/useRecettes'
 import type { Brouillon } from '../utils/edition-recette'
-import { brouillonVide, creerIdentifiant, validerBrouillon, versBrouillon } from '../utils/edition-recette'
+import { brouillonVide, validerBrouillon, versBrouillon } from '../utils/edition-recette'
+import { creerIdentifiant } from '../utils/identifiants'
 
 // #/recettes/nouvelle (création) ou #/recettes/:id/modifier (modification).
 // Réservé aux membres (route protégée ; la base applique aussi la règle RLS).

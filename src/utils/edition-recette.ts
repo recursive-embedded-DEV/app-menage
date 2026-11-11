@@ -105,17 +105,6 @@ export function lignesDeTexte(texte: string): string[] {
     .filter(Boolean)
 }
 
-// « Pain aux bananes ! » → « pain-aux-bananes » (identifiant de l'adresse).
-export function creerIdentifiant(titre: string): string {
-  return titre
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '') // accents
-    .replace(/œ/gi, 'oe')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
-
 export type Validation = { ok: true; recette: RecetteAEnregistrer } | { ok: false; erreur: string }
 
 // Brouillon → recette à enregistrer, ou le premier problème trouvé.

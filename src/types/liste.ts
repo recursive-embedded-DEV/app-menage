@@ -18,6 +18,7 @@ export interface Livre {
   lien: string;  // lien Amazon ; "" si aucun
   isbn: string;  // chiffres seulement ; "" si inconnu
   image: string; // fichier dans public/img/ ; "" → couverture Open Library
+  categorie: string; // « Leadership »… ; "" = sans catégorie (affiché sous « Autres »)
 }
 
 export interface ListeArticles {
@@ -35,3 +36,5 @@ export interface ListeLivres {
 }
 
 export type Liste = ListeArticles | ListeLivres;
+
+export type TypeListe = Liste['type']; // 'articles' | 'livres'

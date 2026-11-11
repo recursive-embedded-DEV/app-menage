@@ -1,13 +1,20 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { Livre, Liste } from '../types/liste'
+import type { Livre, Liste, TypeListe } from '../types/liste'
+import { creerIdentifiant } from '../utils/identifiants'
 import {
   chargerListes,
+  creerListe as creerListeStockee,
   ecouterChangements,
+  identifiantListeLibre,
   insererArticle,
   insererLivre,
   modifierCoche,
+  modifierLivre as modifierLivreStocke,
+  renommerListe as renommerListeStockee,
   supprimerArticle as supprimerArticleStocke,
   supprimerCoches,
+  supprimerListe as supprimerListeStockee,
+  supprimerLivre as supprimerLivreStocke,
 } from '../data/stockage-listes'
 
 // Un « hook » maison : il regroupe l'état des listes ET toutes les
@@ -131,6 +138,59 @@ export function useListes() {
     )
   }
 
+  function modifierLivre(listeId: string, livre: Livre) {
+    executer(
+      listeId,
+      (l) => (l.type === 'livres' ? { ...l, livres: l.livres.map((x) => (x.id === livre.id ? livre : x)) } : l),
+      () => modifierLivreStocke(livre),
+    )
+  }
+
+  function supprimerLivre(listeId: string, livreId: string) {
+    executer(
+      listeId,
+      (l) => (l.type === 'livres' ? { ...l, livres: l.livres.filter((x) => x.id !== livreId) } : l),
+      () => supprimerLivreStocke(livreId),
+    )
+  }
+
+  // ---- Les listes elles-mêmes ----
+
+  // Création : on ATTEND la base (pas d'optimisme), car il faut l'identifiant
+  // définitif pour ouvrir la nouvelle liste. Renvoie cet identifiant, ou null.
+  async function creerListe(titre: string, type: TypeListe): Promise<string | null> {
+    try {
+      const id = await identifiantListeLibre(creerIdentifiant(titre) || 'liste')
+      await creerListeStockee(id, titre, type)
+      setListes((actuelles) => [
+        ...actuelles,
+        type === 'articles' ? { id, titre, type, articles: [] } : { id, titre, type, livres: [] },
+      ])
+      return id
+    } catch {
+      setErreur("La liste n'a pas été créée. Vérifie ta connexion.")
+      return null
+    }
+  }
+
+  function renommerListe(listeId: string, titre: string) {
+    executer(listeId, (l) => ({ ...l, titre }), () => renommerListeStockee(listeId, titre))
+  }
+
+  // PAS optimiste : la page revient ensuite à l'accueil, qui recharge les
+  // listes ; sans attendre la base, la liste supprimée y réapparaîtrait un
+  // instant. Renvoie true si la suppression a réussi.
+  async function supprimerListe(listeId: string): Promise<boolean> {
+    try {
+      await supprimerListeStockee(listeId)
+      setListes((actuelles) => actuelles.filter((l) => l.id !== listeId))
+      return true
+    } catch {
+      setErreur("La liste n'a pas été supprimée. Vérifie ta connexion.")
+      return false
+    }
+  }
+
   return {
     listes,
     chargement,
@@ -140,5 +200,10 @@ export function useListes() {
     supprimerArticle,
     retirerCoches,
     ajouterLivre,
+    modifierLivre,
+    supprimerLivre,
+    creerListe,
+    renommerListe,
+    supprimerListe,
   }
 }

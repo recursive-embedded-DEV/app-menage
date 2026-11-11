@@ -1,4 +1,5 @@
-import type { Article, Livre, Liste } from '../types/liste'
+import type { Article, Livre, Liste, TypeListe } from '../types/liste'
+import { premierLibre } from '../utils/identifiants'
 import { supabase } from './supabase'
 
 // Le SEUL fichier qui sait OÙ les listes sont enregistrées : Supabase.
@@ -30,7 +31,7 @@ export async function chargerListes(): Promise<Liste[]> {
   // et imbrique les articles et les livres dans chaque liste.
   const { data, error } = await supabase
     .from('listes')
-    .select('id, titre, type, articles(id, texte, coche), livres(id, titre, auteur, lien, isbn, image)')
+    .select('id, titre, type, articles(id, texte, coche), livres(id, titre, auteur, lien, isbn, image, categorie)')
     .order('cree_le')
     .order('cree_le', { referencedTable: 'articles' })
     .order('cree_le', { referencedTable: 'livres' })
@@ -73,8 +74,42 @@ export async function insererLivre(listeId: string, livre: Livre): Promise<void>
   verifier(await supabase.from('livres').insert({ ...livre, liste_id: listeId }))
 }
 
-// Temps réel : Supabase prévient l'app quand une ligne d'articles ou de livres
-// change, peu importe quel téléphone l'a modifiée. Les règles RLS s'appliquent
+export async function modifierLivre(livre: Livre): Promise<void> {
+  const { id, ...champs } = livre
+  verifier(await supabase.from('livres').update(champs).eq('id', id))
+}
+
+export async function supprimerLivre(livreId: string): Promise<void> {
+  verifier(await supabase.from('livres').delete().eq('id', livreId))
+}
+
+// ---------------------------------------------------------------------
+// Les listes elles-mêmes (créer, renommer, supprimer).
+// ---------------------------------------------------------------------
+
+// « quincaillerie » s'il est libre, sinon « quincaillerie-2 »… L'identifiant
+// sert dans l'adresse (#/listes/quincaillerie) et ne change plus ensuite.
+export async function identifiantListeLibre(base: string): Promise<string> {
+  const { data, error } = await supabase.from('listes').select('id').like('id', `${base}%`)
+  if (error) throw error
+  return premierLibre(base, new Set((data as { id: string }[]).map((l) => l.id)))
+}
+
+export async function creerListe(id: string, titre: string, type: TypeListe): Promise<void> {
+  verifier(await supabase.from('listes').insert({ id, titre, type }))
+}
+
+export async function renommerListe(id: string, titre: string): Promise<void> {
+  verifier(await supabase.from('listes').update({ titre }).eq('id', id))
+}
+
+// Supprime la liste ET son contenu (on delete cascade, supabase/schema.sql).
+export async function supprimerListe(id: string): Promise<void> {
+  verifier(await supabase.from('listes').delete().eq('id', id))
+}
+
+// Temps réel : Supabase prévient l'app quand une liste, un article ou un livre
+// change, peu importe quel téléphone l'a modifié. Les règles RLS s'appliquent
 // aussi : seuls les membres reçoivent les événements.
 // Retourne la fonction qui arrête l'écoute (à appeler au démontage).
 export function ecouterChangements(rappel: () => void): () => void {
@@ -82,6 +117,7 @@ export function ecouterChangements(rappel: () => void): () => void {
   // (StrictMode) ; deux canaux du même nom entreraient en conflit.
   const canal = supabase
     .channel(`listes-${crypto.randomUUID()}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'listes' }, rappel)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'articles' }, rappel)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'livres' }, rappel)
     .subscribe()

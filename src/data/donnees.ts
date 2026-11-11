@@ -1,6 +1,7 @@
 import type { Aliment } from '../types/aliment'
 import type { Groupe, Recette, ResumeRecette } from '../types/recette'
 import type { RecetteAEnregistrer } from '../utils/edition-recette'
+import { premierLibre } from '../utils/identifiants'
 import { grouperParSection } from '../utils/recettes'
 import { COLONNES_ALIMENT } from './aliments'
 import { supabase } from './supabase'
@@ -100,11 +101,7 @@ export async function enregistrerRecette(recette: RecetteAEnregistrer): Promise<
 export async function identifiantLibre(base: string): Promise<string> {
   const { data, error } = await supabase.from('recettes').select('id').like('id', `${base}%`)
   if (error) throw error
-  const pris = new Set((data as { id: string }[]).map((r) => r.id))
-  if (!pris.has(base)) return base
-  let n = 2
-  while (pris.has(`${base}-${n}`)) n++
-  return `${base}-${n}`
+  return premierLibre(base, new Set((data as { id: string }[]).map((r) => r.id)))
 }
 
 export async function supprimerRecette(id: string): Promise<void> {

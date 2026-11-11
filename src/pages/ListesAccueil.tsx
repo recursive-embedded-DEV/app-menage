@@ -1,4 +1,6 @@
-import { Link } from 'react-router'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router'
+import DialogueNouvelleListe from '../composants/DialogueNouvelleListe'
 import NavBar from '../composants/NavBar'
 import { deconnecter } from '../data/auth'
 import { useListes } from '../hooks/useListes'
@@ -12,7 +14,9 @@ function resume(liste: Liste): string {
 }
 
 export default function ListesAccueil() {
-  const { listes, chargement, erreur } = useListes()
+  const { listes, chargement, erreur, creerListe } = useListes()
+  const naviguer = useNavigate()
+  const [creation, setCreation] = useState(false)
 
   return (
     <div className="page-liste">
@@ -43,8 +47,16 @@ export default function ListesAccueil() {
           </button>
         </p>
       </main>
-      {/* Pas encore fonctionnel : la création de listes viendra plus tard */}
-      <button type="button" className="fab" aria-label="Créer une liste">+</button>
+      <button type="button" className="fab" aria-label="Créer une liste" onClick={() => setCreation(true)}>
+        +
+      </button>
+      {creation && (
+        <DialogueNouvelleListe
+          onCreer={creerListe}
+          onCreee={(id) => naviguer(`/listes/${id}`)}
+          onFerme={() => setCreation(false)}
+        />
+      )}
       <NavBar />
     </div>
   )

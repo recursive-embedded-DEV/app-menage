@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { Aliment } from '../types/aliment'
 import type { Recette } from '../types/recette'
-import { brouillonVide, creerIdentifiant, lignesDeTexte, validerBrouillon, versBrouillon } from './edition-recette'
+import { brouillonVide, lignesDeTexte, validerBrouillon, versBrouillon } from './edition-recette'
+import { creerIdentifiant, premierLibre } from './identifiants'
 
 const riz: Aliment = {
   id: 42,
@@ -45,6 +46,14 @@ describe('creerIdentifiant', () => {
     ['!!!', ''],
   ])('%s → %s', (titre, attendu) => {
     expect(creerIdentifiant(titre)).toBe(attendu)
+  })
+})
+
+describe('premierLibre', () => {
+  it('base, puis -2, -3… selon les identifiants déjà pris', () => {
+    expect(premierLibre('quincaillerie', new Set(['epicerie']))).toBe('quincaillerie')
+    expect(premierLibre('epicerie', new Set(['epicerie']))).toBe('epicerie-2')
+    expect(premierLibre('epicerie', new Set(['epicerie', 'epicerie-2']))).toBe('epicerie-3')
   })
 })
 
