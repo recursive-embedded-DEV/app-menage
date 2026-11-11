@@ -1,3 +1,4 @@
+import { memoriserOngletNutrition } from './cache-nutrition'
 import { supabase } from './supabase'
 
 // Le SEUL fichier qui sait comment on se connecte.
@@ -12,6 +13,17 @@ export async function connecter(courriel: string, motDePasse: string): Promise<v
 
 export async function deconnecter(): Promise<void> {
   await supabase.auth.signOut()
+  // La préférence d'onglet appartient au membre, pas à l'appareil : si un
+  // autre membre se connecte ensuite ici, il ne doit pas hériter de l'onglet.
+  memoriserOngletNutrition(false)
+}
+
+// Identifiant du membre connecté (lu dans la session locale, sans réseau).
+export async function idUtilisateur(): Promise<string> {
+  const { data } = await supabase.auth.getSession()
+  const id = data.session?.user.id
+  if (!id) throw new Error('Aucun membre connecté')
+  return id
 }
 
 // Prévient l'appelant chaque fois que l'état de connexion change.

@@ -34,10 +34,14 @@ export default function ListesAccueil() {
             </li>
           ))}
         </ul>
-        {/* Rarement utile (la session dure), mais nécessaire pour changer de compte. */}
-        <button type="button" className="bouton-discret bouton-deconnexion" onClick={deconnecter}>
-          Se déconnecter
-        </button>
+        {/* Préférences du membre (onglet Nutrition) et déconnexion, rarement utile
+            (la session dure) mais nécessaire pour changer de compte. */}
+        <p className="liens-compte">
+          <Link to="/profil" className="bouton-discret">Mon profil</Link>
+          <button type="button" className="bouton-discret" onClick={deconnecter}>
+            Se déconnecter
+          </button>
+        </p>
       </main>
       {/* Pas encore fonctionnel : la création de listes viendra plus tard */}
       <button type="button" className="fab" aria-label="Créer une liste">+</button>

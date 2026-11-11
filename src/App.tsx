@@ -12,6 +12,9 @@ const ListesAccueil = lazy(() => import('./pages/ListesAccueil'))
 const PageListe = lazy(() => import('./pages/PageListe'))
 const RouteProtegee = lazy(() => import('./composants/RouteProtegee'))
 const PageAliments = lazy(() => import('./pages/PageAliments'))
+const PageJournal = lazy(() => import('./pages/PageJournal'))
+const PageObjectifs = lazy(() => import('./pages/PageObjectifs'))
+const PageProfil = lazy(() => import('./pages/PageProfil'))
 
 // Le « standard » de l'app : quelle adresse affiche quelle page.
 // HashRouter met la route après un # (ex. index.html#/listes/epicerie),
@@ -29,8 +32,13 @@ export default function App() {
         {/* Listes : réservées aux membres du ménage connectés */}
         <Route path="/listes" element={<RouteProtegee><ListesAccueil /></RouteProtegee>} />
         <Route path="/listes/:id" element={<RouteProtegee><PageListe /></RouteProtegee>} />
-        {/* Nutrition, Phase A : page de test, pas encore dans la barre de navigation */}
+        <Route path="/profil" element={<RouteProtegee><PageProfil /></RouteProtegee>} />
+        {/* Nutrition : privé, onglet affiché sur option (Mon profil). React Router
+            préfère les routes fixes (aliments, objectifs) à la route variable :date. */}
+        <Route path="/nutrition" element={<RouteProtegee><PageJournal /></RouteProtegee>} />
         <Route path="/nutrition/aliments" element={<RouteProtegee><PageAliments /></RouteProtegee>} />
+        <Route path="/nutrition/objectifs" element={<RouteProtegee><PageObjectifs /></RouteProtegee>} />
+        <Route path="/nutrition/:date" element={<RouteProtegee><PageJournal /></RouteProtegee>} />
         <Route path="/recettes" element={<ListeRecettes />} />
         <Route path="/recettes/:id" element={<PageRecette />} />
         {/* Toute autre adresse : retour aux listes */}

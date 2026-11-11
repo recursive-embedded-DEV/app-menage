@@ -1,28 +1,13 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
 import NavBar from '../composants/NavBar'
 import DialogueNouvelAliment from '../composants/DialogueNouvelAliment'
 import { useRechercheAliments } from '../hooks/useRechercheAliments'
-import type { Aliment, Valeurs } from '../types/aliment'
-import { CLES_VALEURS, formaterValeur, valeursPour } from '../utils/nutrition'
+import type { Aliment } from '../types/aliment'
+import { formaterValeur, resumeValeurs, valeursPour } from '../utils/nutrition'
 
-// Libellés courts des 4 valeurs, dans l'ordre de CLES_VALEURS.
-const LIBELLES: Record<keyof Valeurs, string> = {
-  kcal: 'kcal',
-  proteines_g: 'prot.',
-  glucides_g: 'gluc.',
-  lipides_g: 'lip.',
-}
-
-// « 69 kcal · 5,6 g prot. · 0,4 g gluc. · 4,8 g lip. »
-function resumeValeurs(v: Valeurs): string {
-  return CLES_VALEURS.map((cle) =>
-    cle === 'kcal' ? `${formaterValeur(v.kcal, 'kcal')} kcal` : `${formaterValeur(v[cle], cle)} g ${LIBELLES[cle]}`,
-  ).join(' · ')
-}
-
-// Page de TEST de la Phase A (#/nutrition/aliments, absente de la barre de
-// navigation) : recherche dans la base d'aliments et création d'aliments perso.
-// Elle deviendra un écran de l'onglet Nutrition à la Phase B.
+// « Gérer les aliments » (#/nutrition/aliments) : recherche dans la base
+// d'aliments, fiche avec les mesures, création d'aliments perso.
 export default function PageAliments() {
   const [texte, setTexte] = useState('')
   const [choisi, setChoisi] = useState<Aliment | null>(null)
@@ -30,6 +15,9 @@ export default function PageAliments() {
 
   return (
     <div className="page-aliments">
+      <nav className="barre-retour">
+        <Link to="/nutrition" className="bouton">← Journal</Link>
+      </nav>
       <header className="entete-app">
         <h1>Aliments</h1>
       </header>
