@@ -25,4 +25,8 @@ dist-ssr
 
 # Documentation personnelle (journal de bord, etc.)
 documentation/
+
+# Plans d'entraînement de course : propriété de la Clinique du coureur,
+# usage personnel seulement, ne doivent pas être dans un dépôt public
+data/
 .vs/
