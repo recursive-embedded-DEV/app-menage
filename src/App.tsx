@@ -18,6 +18,8 @@ const PageProfil = lazy(() => import('./pages/PageProfil'))
 const PageEditionRecette = lazy(() => import('./pages/PageEditionRecette'))
 const PageAgenda = lazy(() => import('./pages/PageAgenda'))
 const PageReglagesAgenda = lazy(() => import('./pages/PageReglagesAgenda'))
+const PageEvenement = lazy(() => import('./pages/PageEvenement'))
+const PageFormulaireEvenement = lazy(() => import('./pages/PageFormulaireEvenement'))
 
 // Le « standard » de l'app : quelle adresse affiche quelle page.
 // HashRouter met la route après un # (ex. index.html#/listes/epicerie),
@@ -39,6 +41,9 @@ export default function App() {
         {/* Agenda : événements dans Google Agenda ; réglages « quel agenda pour qui » dans Supabase. */}
         <Route path="/agenda" element={<RouteProtegee><PageAgenda /></RouteProtegee>} />
         <Route path="/agenda/reglages" element={<RouteProtegee><PageReglagesAgenda /></RouteProtegee>} />
+        <Route path="/agenda/nouveau/:date" element={<RouteProtegee><PageFormulaireEvenement /></RouteProtegee>} />
+        <Route path="/agenda/evenement/:agendaId/:id" element={<RouteProtegee><PageEvenement /></RouteProtegee>} />
+        <Route path="/agenda/evenement/:agendaId/:id/modifier" element={<RouteProtegee><PageFormulaireEvenement /></RouteProtegee>} />
         <Route path="/agenda/:date" element={<RouteProtegee><PageAgenda /></RouteProtegee>} />
         {/* Nutrition : privé, onglet affiché sur option (Mon profil). React Router
             préfère les routes fixes (aliments, objectifs) à la route variable :date. */}

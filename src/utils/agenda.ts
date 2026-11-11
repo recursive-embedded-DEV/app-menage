@@ -87,3 +87,80 @@ export function proposerReglages(
     famille: contient('famille'),
   }
 }
+
+// ---------------------------------------------------------------------
+// Création et modification (G3) : formulaire ↔ événement Google.
+// ---------------------------------------------------------------------
+
+// Liens vers les modules, rangés dans extendedProperties.private de
+// l'événement Google. "" = aucun lien.
+export interface LiensEvenement {
+  recette: string // identifiant d'une recette (ex. « banh-mi »)
+  liste: string // identifiant d'une liste (ex. « epicerie »)
+}
+
+// Ce que contient le formulaire (des textes, comme les tape l'utilisateur).
+export interface ChampsEvenement {
+  titre: string
+  date: string // AAAA-MM-JJ
+  journeeEntiere: boolean
+  debut: string // « 18:00 » (input type="time")
+  fin: string // « 19:00 »
+  lieu: string
+  liens: LiensEvenement
+}
+
+// « 18:00 » + 60 min → « 19:00 » ; plafonné à 23:59 (pas de passage au lendemain).
+export function ajouterMinutes(heure: string, minutes: number): string {
+  const [h, m] = heure.split(':').map(Number)
+  const total = Math.min(h * 60 + m + minutes, 23 * 60 + 59)
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
+}
+
+// Premier problème du formulaire, ou null s'il est valide.
+export function validerChamps(c: ChampsEvenement): string | null {
+  if (!c.titre.trim()) return 'Donne un titre à l’événement.'
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(c.date)) return 'Choisis une date.'
+  if (!c.journeeEntiere) {
+    if (!/^\d{2}:\d{2}$/.test(c.debut) || !/^\d{2}:\d{2}$/.test(c.fin)) return 'Indique l’heure de début et de fin.'
+    if (c.fin <= c.debut) return 'La fin doit suivre le début.' // « HH:MM » se compare comme du texte
+  }
+  return null
+}
+
+// Formulaire → corps d'une requête à Google (création ou modification).
+//   - journée entière : des DATES, la fin étant EXCLUSIVE (le lendemain) ;
+//   - sinon : heures LOCALES + timeZone : c'est Google qui applique l'heure
+//     avancée, aucun écart calculé ici.
+//   - les deux liens sont TOUJOURS envoyés ("" = aucun) : une modification
+//     partielle (PATCH) fusionne ces propriétés, elle n'effacerait pas un
+//     ancien lien absent du corps.
+export function versEvenementGoogle(c: ChampsEvenement) {
+  const moment = (heure: string) => ({ dateTime: `${c.date}T${heure}:00`, timeZone: 'America/Toronto' })
+  return {
+    summary: c.titre.trim(),
+    location: c.lieu.trim(),
+    start: c.journeeEntiere ? { date: c.date } : moment(c.debut),
+    end: c.journeeEntiere ? { date: decalerJours(c.date, 1) } : moment(c.fin),
+    extendedProperties: { private: { recette: c.liens.recette, liste: c.liens.liste } },
+  }
+}
+
+// Heure locale « HH:MM » d'un instant (pour préremplir un input type="time").
+function heureFormulaire(instant: Date): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto', hourCycle: 'h23', hour: '2-digit', minute: '2-digit' }).format(instant)
+}
+
+// Événement existant → formulaire prérempli (modification).
+export function versChamps(e: Evenement): ChampsEvenement {
+  const dateDebut = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Toronto' }).format(e.debut)
+  return {
+    titre: e.titre,
+    date: dateDebut,
+    journeeEntiere: e.journeeEntiere,
+    debut: e.journeeEntiere ? '09:00' : heureFormulaire(e.debut),
+    fin: e.journeeEntiere ? '10:00' : heureFormulaire(e.fin),
+    lieu: e.lieu,
+    liens: { recette: e.liens.recette ?? '', liste: e.liens.liste ?? '' },
+  }
+}

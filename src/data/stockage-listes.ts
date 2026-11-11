@@ -113,6 +113,14 @@ export async function creerListe(base: string, titre: string, type: TypeListe, p
   throw new Error('Aucun identifiant libre trouvé')
 }
 
+// Noms des listes visibles (pour relier un événement de l'agenda à une liste) :
+// requête légère, sans les articles ni les livres.
+export async function titresListes(): Promise<{ id: string; titre: string }[]> {
+  const { data, error } = await supabase.from('listes').select('id, titre').order('cree_le')
+  if (error) throw error
+  return data as { id: string; titre: string }[]
+}
+
 // Partagée ↔ personnelle (au nom du membre connecté). L'Épicerie reste
 // partagée : la base le refuse (contrainte listes_epicerie_partagee).
 export async function changerPartage(id: string, personnelle: boolean): Promise<void> {

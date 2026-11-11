@@ -127,7 +127,9 @@ function Semaine({ date, aujourdhui }: { date: string; aujourdhui: string }) {
 
         <ul className="evenements">
           {duJour.map((e) => (
-            <li key={`${e.agendaId}-${e.id}`} className="evenement">
+            <li key={`${e.agendaId}-${e.id}`}>
+              {/* Toucher l'événement : son détail (et ses liens vers les modules). */}
+              <Link className="evenement" to={`/agenda/evenement/${encodeURIComponent(e.agendaId)}/${encodeURIComponent(e.id)}`}>
               <div className="evenement-heure">
                 {e.journeeEntiere ? (
                   <strong>Journée</strong>
@@ -145,11 +147,22 @@ function Semaine({ date, aujourdhui }: { date: string; aujourdhui: string }) {
                   {NOMS[e.personne]}
                   {e.lieu && ` · ${e.lieu}`}
                 </span>
+                {/* Liens vers les modules ("" = aucun). */}
+                {e.liens.recette && <span className="etiquette-lien">Recette</span>}
+                {e.liens.liste && <span className="etiquette-lien">Liste</span>}
               </div>
+              </Link>
             </li>
           ))}
         </ul>
       </main>
+
+      {/* Nouvel événement, au jour affiché. */}
+      {reglages && (
+        <Link to={`/agenda/nouveau/${date}`} className="fab" aria-label="Nouvel événement">
+          +
+        </Link>
+      )}
       <NavBar />
     </div>
   )

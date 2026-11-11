@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { evenementsDuJour, lireEvenementGoogle, personnesDuJour, proposerReglages } from './agenda'
+import {
+  ajouterMinutes,
+  evenementsDuJour,
+  lireEvenementGoogle,
+  personnesDuJour,
+  proposerReglages,
+  validerChamps,
+  versChamps,
+  versEvenementGoogle,
+} from './agenda'
 
 describe('lireEvenementGoogle', () => {
   it('événement à heure précise', () => {
@@ -78,5 +87,56 @@ describe('proposerReglages', () => {
 
   it('rien de reconnaissable : null', () => {
     expect(proposerReglages([{ id: 'p', nom: 'p', principal: true }], null)).toEqual({ mathieu: null, mariana: null, famille: null })
+  })
+})
+
+describe('formulaire ↔ événement Google', () => {
+  const base = {
+    titre: ' Souper : Potage ',
+    date: '2026-11-12',
+    journeeEntiere: false,
+    debut: '18:00',
+    fin: '19:00',
+    lieu: '',
+    liens: { recette: 'potage-courge', liste: '' },
+  }
+
+  it('heures locales avec timeZone ; les deux liens toujours envoyés', () => {
+    expect(versEvenementGoogle(base)).toEqual({
+      summary: 'Souper : Potage',
+      location: '',
+      start: { dateTime: '2026-11-12T18:00:00', timeZone: 'America/Toronto' },
+      end: { dateTime: '2026-11-12T19:00:00', timeZone: 'America/Toronto' },
+      extendedProperties: { private: { recette: 'potage-courge', liste: '' } },
+    })
+  })
+
+  it('journée entière : fin EXCLUSIVE (le lendemain), même en fin de mois', () => {
+    const e = versEvenementGoogle({ ...base, journeeEntiere: true, date: '2026-11-30' })
+    expect(e.start).toEqual({ date: '2026-11-30' })
+    expect(e.end).toEqual({ date: '2026-12-01' })
+  })
+
+  it('validerChamps', () => {
+    expect(validerChamps(base)).toBeNull()
+    expect(validerChamps({ ...base, titre: ' ' })).toContain('titre')
+    expect(validerChamps({ ...base, fin: '17:30' })).toContain('fin')
+    expect(validerChamps({ ...base, fin: '18:00' })).toContain('fin') // durée nulle
+    expect(validerChamps({ ...base, journeeEntiere: true, fin: '' })).toBeNull() // heures ignorées
+  })
+
+  it('ajouterMinutes, plafonné à 23:59', () => {
+    expect(ajouterMinutes('18:00', 60)).toBe('19:00')
+    expect(ajouterMinutes('09:45', 30)).toBe('10:15')
+    expect(ajouterMinutes('23:30', 60)).toBe('23:59')
+  })
+
+  it('versChamps : heures et date LOCALES, liens absents → ""', () => {
+    const e = lireEvenementGoogle(
+      { id: 'x', summary: 'Dentiste', start: { dateTime: '2026-11-11T14:00:00-05:00' }, end: { dateTime: '2026-11-11T15:30:00-05:00' } },
+      'a',
+      'mathieu',
+    )!
+    expect(versChamps(e)).toMatchObject({ titre: 'Dentiste', date: '2026-11-11', debut: '14:00', fin: '15:30', liens: { recette: '', liste: '' } })
   })
 })
