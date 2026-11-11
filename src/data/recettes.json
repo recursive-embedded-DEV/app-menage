@@ -2,7 +2,7 @@
   {
     "id": "macaroni-proteine",
     "titre": "Macaroni protéiné et dinde hachée",
-    "image": "macaroni-proteine.png",
+    "image": "macaroni-proteine.webp",
     "temps": { "preparation_min": 10, "cuisson_min": 15, "repos_min": 0 },
     "rendement": "4 portions",
     "ingredients": [
@@ -33,7 +33,7 @@
   {
     "id": "pokebowl-saumon",
     "titre": "Pokebowl au saumon",
-    "image": "pokebowl-saumon.png",
+    "image": "pokebowl-saumon.webp",
     "temps": { "preparation_min": 15, "cuisson_min": 0, "repos_min": 0 },
     "rendement": "2 portions",
     "ingredients": [
@@ -68,7 +68,7 @@
   {
     "id": "banh-mi",
     "titre": "Bol façon bành mì",
-    "image": "banh-mi.png",
+    "image": "banh-mi.webp",
     "temps": { "preparation_min": 40, "cuisson_min": 20, "repos_min": 20 },
     "rendement": "4 portions",
     "ingredients": [
@@ -271,7 +271,7 @@
   {
     "id": "potage-courge",
     "titre": "Potage de courge Butternut",
-    "image": "potage-courge.png",
+    "image": "potage-courge.webp",
     "temps": { "preparation_min": 20, "cuisson_min": 30, "repos_min": 0 },
     "rendement": "4 portions",
     "ingredients": [
@@ -305,7 +305,7 @@
   {
     "id": "quesadilla",
     "titre": "Quesadilla au poulet",
-    "image": "quesadilla.png",
+    "image": "quesadilla.webp",
     "temps": { "preparation_min": 5, "cuisson_min": 5, "repos_min": 0 },
     "rendement": "1 quesadilla",
     "ingredients": [
@@ -369,7 +369,7 @@
   {
     "id": "trempette-7-etages",
     "titre": "Trempette 7 étages",
-    "image": "trempette-7-etages.png",
+    "image": "trempette-7-etages.webp",
     "temps": { "preparation_min": 30, "cuisson_min": 0, "repos_min": 0 },
     "rendement": "10 à 12 portions",
     "ingredients": [
