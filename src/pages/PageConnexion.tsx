@@ -33,7 +33,7 @@ export default function PageConnexion() {
         <p>Connecte-toi pour voir les listes du ménage.</p>
       </header>
       <main>
-        <form onSubmit={soumettre}>
+        <form className="formulaire" onSubmit={soumettre}>
           {/* Les attributs autoComplete permettent au trousseau de l'iPhone
               ou au gestionnaire Google de proposer et de retenir le mot de passe. */}
           <label>

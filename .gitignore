@@ -31,3 +31,7 @@ documentation/
 # Le / initial limite la règle au dossier data/ à la RACINE (sinon src/data/ serait ignoré aussi).
 /data/
 .vs/
+
+# Fichiers bruts du FCEN (Santé Canada) : téléchargés et convertis localement,
+# seul le CSV converti est importé dans Supabase. Inutile de les versionner.
+/donnees-fcen/

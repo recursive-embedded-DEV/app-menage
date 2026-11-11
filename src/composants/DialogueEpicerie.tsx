@@ -74,7 +74,7 @@ export default function DialogueEpicerie({ recette, portionsPage }: Props) {
         </p>
       )}
 
-      <dialog id="dialogue-epicerie" ref={dialogue}>
+      <dialog id="dialogue-epicerie" className="dialogue" ref={dialogue}>
         <form onSubmit={soumettre}>
           <h2>Ajouter à l'épicerie</h2>
           <SelecteurPortions valeur={portions} onChange={setPortions} />

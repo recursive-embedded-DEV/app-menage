@@ -31,8 +31,8 @@ export default function DialogueLivre({ onAjouter }: Props) {
 
   return (
     <>
-      <dialog id="dialogue-livre" ref={dialogue} onClose={() => form.current?.reset()}>
-        <form id="form-livre" ref={form} onSubmit={soumettre}>
+      <dialog className="dialogue" ref={dialogue} onClose={() => form.current?.reset()}>
+        <form className="formulaire" ref={form} onSubmit={soumettre}>
           <h2>Nouveau livre</h2>
           <label>Titre <input type="text" name="titre" required /></label>
           <label>Auteur <input type="text" name="auteur" required /></label>

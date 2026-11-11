@@ -277,9 +277,10 @@ input:checked + span {
     flex-shrink: 0;
 }
 
-/* === Dialogue d'ajout (livres.html) === */ 
-#dialogue-livre,
-#dialogue-epicerie {
+/* === Boîtes de dialogue et formulaires (classes réutilisables) ===
+   Extraites à la 3e occurrence : livres, épicerie, nouvel aliment
+   (.dialogue) ; livres, connexion, nouvel aliment (.formulaire). */
+.dialogue {
     border: none;
     border-radius: 12px;
     padding: 20px;
@@ -287,27 +288,27 @@ input:checked + span {
     max-width: 340px;
 }
 
-#dialogue-livre::backdrop,
-#dialogue-epicerie::backdrop {
+.dialogue::backdrop {
     background-color: rgba(0, 0, 0, 0.4);
 }
 
-#form-livre {
+.formulaire {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-#form-livre label {
+.formulaire label {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-#form-livre input {
+/* 16 px minimum : en dessous, Safari sur iPhone zoome dans le champ. */
+.formulaire input {
     border: 1px solid lightgray;
     border-radius: 6px;
-    font-size: inherit;
+    font-size: 16px;
     padding: 8px;
 }
 
@@ -359,24 +360,14 @@ input:checked + span {
 
 
 /* === Connexion et messages (module Listes + Supabase) === */
+/* La mise en page du formulaire vient de .formulaire ; ici, seulement ce qui
+   est propre à la page de connexion. */
 .page-connexion form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
     padding: 16px;
 }
 
 .page-connexion label {
     color: var(--accent);
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-/* 16 px minimum : en dessous, Safari sur iPhone zoome dans le champ. */
-.page-connexion input {
-    font-size: 16px;
-    padding: 8px;
 }
 
 /* Réutilisée par la connexion, l'accueil des listes et une liste. */
@@ -512,5 +503,80 @@ input:checked + span {
 .chargement-page {
     color: gray;
     padding: 24px;
+    text-align: center;
+}
+
+.formulaire fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+.formulaire legend {
+    color: var(--accent);
+    font-weight: 700;
+    padding-bottom: 4px;
+}
+
+/* Deux colonnes de champs (calories | protéines, glucides | lipides). */
+.grille-valeurs {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+}
+
+
+/* === Nutrition : base d'aliments (Phase A, page de test) === */
+.page-aliments main {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+}
+
+.champ-recherche {
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 10px;
+}
+
+.fiche-aliment h2 {
+    color: var(--accent);
+    font-size: 1.1em;
+    margin: 0;
+}
+
+.fiche-aliment ul {
+    padding-left: 18px;
+}
+
+.resultats-aliments {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Chaque résultat est un bouton (accessible au clavier), présenté comme une ligne. */
+.resultats-aliments button {
+    background: none;
+    border: none;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    font-size: inherit;
+    padding: 10px 4px;
+    text-align: left;
+    width: 100%;
+}
+
+.resultats-aliments small {
+    color: dimgray;
+}
+
+.attribution {
+    color: gray;
+    font-size: 0.8em;
     text-align: center;
 }

@@ -11,6 +11,7 @@ const PageRecette = lazy(() => import('./pages/PageRecette'))
 const ListesAccueil = lazy(() => import('./pages/ListesAccueil'))
 const PageListe = lazy(() => import('./pages/PageListe'))
 const RouteProtegee = lazy(() => import('./composants/RouteProtegee'))
+const PageAliments = lazy(() => import('./pages/PageAliments'))
 
 // Le « standard » de l'app : quelle adresse affiche quelle page.
 // HashRouter met la route après un # (ex. index.html#/listes/epicerie),
@@ -28,6 +29,8 @@ export default function App() {
         {/* Listes : réservées aux membres du ménage connectés */}
         <Route path="/listes" element={<RouteProtegee><ListesAccueil /></RouteProtegee>} />
         <Route path="/listes/:id" element={<RouteProtegee><PageListe /></RouteProtegee>} />
+        {/* Nutrition, Phase A : page de test, pas encore dans la barre de navigation */}
+        <Route path="/nutrition/aliments" element={<RouteProtegee><PageAliments /></RouteProtegee>} />
         <Route path="/recettes" element={<ListeRecettes />} />
         <Route path="/recettes/:id" element={<PageRecette />} />
         {/* Toute autre adresse : retour aux listes */}
