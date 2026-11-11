@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Livre } from '../types/liste'
 import { chercherInfosLivre } from '../data/couvertures'
-import { lireCodeBarresDansPhoto } from '../utils/lecture-code-barres'
-import { estIsbn13, extraireAsin, isbn13VersIsbn10, isbnDepuisLien, lienAmazon, nettoyerIsbn } from '../utils/livres'
+// PHOTO (1/4) : import { lireCodeBarresDansPhoto } from '../utils/lecture-code-barres'
+// (et estIsbn13 dans l'import suivant)
+import { extraireAsin, isbn13VersIsbn10, isbnDepuisLien, lienAmazon, nettoyerIsbn } from '../utils/livres'
 import { cheminImage } from '../utils/temps'
 import ScanneurCodeBarres from './ScanneurCodeBarres'
 
@@ -35,8 +36,11 @@ export default function DialogueLivre({ livre, categories, onEnregistrer, onSupp
   const [recherche, setRecherche] = useState<'repos' | 'en-cours' | 'rien'>('repos')
   const [confirmer, setConfirmer] = useState(false)
   const [scanner, setScanner] = useState(false) // caméra ouverte ?
-  // Lecture d'une photo du code-barres (appareil photo natif).
-  const [photo, setPhoto] = useState<'repos' | 'lecture' | 'illisible'>('repos')
+  // DÉSACTIVÉ — « 📸 Photo du code-barres » (décision de Mathieu : le scan en
+  // direct suffit depuis le passage en Full HD). Pour réactiver : décommenter
+  // les 4 passages marqués « PHOTO » dans ce fichier.
+  // PHOTO (2/4) : lecture d'une photo du code-barres (appareil photo natif).
+  // const [photo, setPhoto] = useState<'repos' | 'lecture' | 'illisible'>('repos')
 
   useEffect(() => {
     dialogue.current?.showModal()
@@ -97,22 +101,22 @@ export default function DialogueLivre({ livre, categories, onEnregistrer, onSupp
     chercher({ isbn: isbn13, titre: champs.titre, auteur: champs.auteur, lien }, false)
   }
 
-  // Photo prise avec l'appareil photo NATIF : il gère la mise au point et le
-  // mode macro, ce qu'une page web ne peut pas faire avec la caméra en direct.
-  function lirePhoto(fichier: File | undefined) {
-    if (!fichier) return
-    setPhoto('lecture')
-    lireCodeBarresDansPhoto(fichier)
-      .then((code) => {
-        if (code && estIsbn13(code)) {
-          setPhoto('repos')
-          codeDetecte(code)
-        } else {
-          setPhoto('illisible')
-        }
-      })
-      .catch(() => setPhoto('illisible'))
-  }
+  // PHOTO (3/4) : photo prise avec l'appareil photo NATIF (il gère la mise au
+  // point et le mode macro, ce qu'une page web ne peut pas faire en direct).
+  // function lirePhoto(fichier: File | undefined) {
+  //   if (!fichier) return
+  //   setPhoto('lecture')
+  //   lireCodeBarresDansPhoto(fichier)
+  //     .then((code) => {
+  //       if (code && estIsbn13(code)) {
+  //         setPhoto('repos')
+  //         codeDetecte(code)
+  //       } else {
+  //         setPhoto('illisible')
+  //       }
+  //     })
+  //     .catch(() => setPhoto('illisible'))
+  // }
 
   function soumettre(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -141,8 +145,8 @@ export default function DialogueLivre({ livre, categories, onEnregistrer, onSupp
             <button type="button" className="bouton" onClick={() => setScanner(true)}>
               📷 Scanner le code-barres
             </button>
-            {/* Solution de rechange : un <label> qui ouvre l'appareil photo natif.
-                capture="environment" : directement la caméra arrière. */}
+            {/* PHOTO (4/4) : un <label> qui ouvre l'appareil photo natif
+                (capture="environment" : directement la caméra arrière).
             <label className="bouton">
               {photo === 'lecture' ? 'Lecture…' : '📸 Photo du code-barres'}
               <input
@@ -156,13 +160,16 @@ export default function DialogueLivre({ livre, categories, onEnregistrer, onSupp
                 }}
               />
             </label>
+            */}
           </div>
         )}
+        {/* PHOTO (4/4, suite) : message si la photo est illisible.
         {photo === 'illisible' && (
           <p className="note-portions">
             Code-barres illisible : reprends la photo bien droite et nette, le code au centre, ou tape l'ISBN.
           </p>
         )}
+        */}
         <label>
           Lien Amazon <small>(le coller remplit le reste s'il s'agit d'un livre imprimé)</small>
           <input type="url" value={champs.lien} onChange={(e) => changerLien(e.target.value)} placeholder="https://www.amazon.ca/dp/…" />

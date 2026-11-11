@@ -22,6 +22,8 @@ const LARGEUR_ANALYSE = 2000
 
 // Code-barres lu dans une PHOTO (appareil photo natif : mise au point et macro
 // gérées par le téléphone). Renvoie le texte du code, ou null s'il est illisible.
+// EN RÉSERVE : le bouton « 📸 Photo du code-barres » est désactivé (mis en
+// commentaires dans DialogueLivre.tsx, passages « PHOTO ») ; le scan en direct suffit.
 export async function lireCodeBarresDansPhoto(fichier: File): Promise<string | null> {
   const lecteur = await creerLecteur()
   // imageOrientation : respecte l'orientation EXIF (photo prise à la verticale).
