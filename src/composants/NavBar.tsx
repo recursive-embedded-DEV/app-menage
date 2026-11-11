@@ -2,8 +2,6 @@ import type { ReactNode } from 'react'
 import { NavLink } from 'react-router'
 import { useOngletNutrition } from '../hooks/useOngletNutrition'
 
-const BASE = import.meta.env.BASE_URL
-
 // Icônes au trait (SVG inline) : stroke="currentColor" prend la couleur du
 // texte du lien, donc l'onglet actif devient bleu tout seul (classe active).
 // aria-hidden : décoratives, le libellé sous l'icône suffit.
@@ -27,9 +25,8 @@ const ICONES = {
   nutrition: <path d="M12 21c-5 0-8-4-8-9 4 0 6 2 8 5 2-3 4-5 8-5 0 5-3 9-8 9zM12 17V7" />,
 }
 
-// Agenda est encore une page HTML statique (dans public/) : <a> ordinaire.
-// Listes et Recettes sont gérés par React : <NavLink>, qui ajoute tout seul
-// la classe "active" quand l'adresse correspond (ex. /listes/epicerie).
+// Toutes les pages sont gérées par React : <NavLink> ajoute tout seul la
+// classe "active" quand l'adresse correspond (ex. /listes/epicerie).
 //
 // Onglet Nutrition : affiché seulement si le membre l'a activé (Mon profil).
 // La valeur vient d'un cache LOCAL (data/cache-nutrition.ts), pas de Supabase.
@@ -42,10 +39,10 @@ export default function NavBar() {
     <nav className="nav-bar">
       <ul>
         <li>
-          <a href={`${BASE}agenda.html`}>
+          <NavLink to="/agenda">
             <Icone chemin={ICONES.agenda} />
             Agenda
-          </a>
+          </NavLink>
         </li>
         <li>
           <NavLink to="/listes">

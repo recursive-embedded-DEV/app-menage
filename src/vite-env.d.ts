@@ -10,4 +10,7 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_PUBLISHABLE_KEY: string
   // Facultative : sans elle, la recherche de livres saute Google Books.
   readonly VITE_GOOGLE_BOOKS_KEY?: string
+  // ID client OAuth de Google (Agenda) : public, valable seulement pour les
+  // origines autorisées dans la console Google Cloud.
+  readonly VITE_GOOGLE_CLIENT_ID?: string
 }

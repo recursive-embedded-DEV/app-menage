@@ -1,4 +1,5 @@
 import { memoriserOngletNutrition } from './cache-nutrition'
+import { deconnecterGoogle } from './google'
 import { supabase } from './supabase'
 
 // Le SEUL fichier qui sait comment on se connecte.
@@ -16,6 +17,8 @@ export async function deconnecter(): Promise<void> {
   // La préférence d'onglet appartient au membre, pas à l'appareil : si un
   // autre membre se connecte ensuite ici, il ne doit pas hériter de l'onglet.
   memoriserOngletNutrition(false)
+  // Même chose pour la connexion à Google Agenda.
+  deconnecterGoogle()
 }
 
 // Identifiant du membre connecté (lu dans la session locale, sans réseau).

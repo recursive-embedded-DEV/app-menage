@@ -52,3 +52,82 @@ export function formaterDateLongue(date: string, aujourdhui: string = dateLocale
   }).format(new Date(`${date}T00:00:00Z`))
   return texte.charAt(0).toUpperCase() + texte.slice(1)
 }
+
+// ---------------------------------------------------------------------
+// Agenda : bornes d'une journée et semaine (lundi → dimanche), au fuseau du Québec.
+// ---------------------------------------------------------------------
+
+// Écart en minutes entre l'heure de Montréal et l'UTC à un instant donné
+// (−300 en hiver, −240 en été). Calculé, jamais codé en dur : il change deux
+// fois par année (heure avancée).
+export function decalageFuseau(instant: Date): number {
+  const parties = Object.fromEntries(
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone: FUSEAU,
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })
+      .formatToParts(instant)
+      .map((p) => [p.type, p.value]),
+  )
+  const commeUtc = Date.UTC(+parties.year, +parties.month - 1, +parties.day, +parties.hour, +parties.minute, +parties.second)
+  return Math.round((commeUtc - instant.getTime()) / 60000)
+}
+
+// Instant (UTC) où commence la journée locale AAAA-MM-JJ : minuit à Montréal.
+// Sert de borne aux requêtes à Google Agenda (timeMin, timeMax).
+export function debutJour(date: string): Date {
+  const [a, m, j] = date.split('-').map(Number)
+  const minuitUtc = Date.UTC(a, m - 1, j)
+  // 1er essai avec l'écart de minuit UTC, puis correction avec l'écart réel
+  // à l'instant trouvé (utile les jours de changement d'heure).
+  const essai = minuitUtc - decalageFuseau(new Date(minuitUtc)) * 60000
+  return new Date(minuitUtc - decalageFuseau(new Date(essai)) * 60000)
+}
+
+// Lundi de la semaine d'une date (la semaine commence le lundi au Québec).
+export function debutSemaine(date: string): string {
+  const jourSemaine = new Date(`${date}T00:00:00Z`).getUTCDay() // 0 = dimanche
+  return decalerJours(date, -((jourSemaine + 6) % 7))
+}
+
+// Les 7 dates de la semaine (lundi → dimanche) d'une date.
+export function joursSemaine(date: string): string[] {
+  const lundi = debutSemaine(date)
+  return Array.from({ length: 7 }, (_, i) => decalerJours(lundi, i))
+}
+
+const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+
+// « 9 au 15 novembre 2026 » ; sur deux mois : « 30 novembre au 6 décembre 2026 » ;
+// sur deux années : « 28 décembre 2026 au 3 janvier 2027 ».
+export function libelleSemaine(date: string): string {
+  const jours = joursSemaine(date)
+  const [a1, m1, j1] = jours[0].split('-').map(Number)
+  const [a2, m2, j2] = jours[6].split('-').map(Number)
+  if (a1 !== a2) return `${j1} ${MOIS[m1 - 1]} ${a1} au ${j2} ${MOIS[m2 - 1]} ${a2}`
+  if (m1 !== m2) return `${j1} ${MOIS[m1 - 1]} au ${j2} ${MOIS[m2 - 1]} ${a2}`
+  return `${j1} au ${j2} ${MOIS[m2 - 1]} ${a2}`
+}
+
+const JOURS_COURTS = ['dim', 'lun', 'mar', 'mer', 'jeu', 'ven', 'sam']
+
+// « mer » et « 11 » pour la bande des jours.
+export function jourCourt(date: string): { nom: string; numero: number } {
+  const d = new Date(`${date}T00:00:00Z`)
+  return { nom: JOURS_COURTS[d.getUTCDay()], numero: d.getUTCDate() }
+}
+
+// Heure locale lisible : « 6 h 30 », « 14 h ».
+export function heureCourte(instant: Date): string {
+  const [h, m] = new Intl.DateTimeFormat('en-CA', { timeZone: FUSEAU, hourCycle: 'h23', hour: '2-digit', minute: '2-digit' })
+    .format(instant)
+    .split(':')
+    .map(Number)
+  return m === 0 ? `${h} h` : `${h} h ${String(m).padStart(2, '0')}`
+}
