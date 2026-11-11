@@ -8,7 +8,9 @@ const DELAI_MS = 250
 const LONGUEUR_MIN = 2
 
 // Recherche d'aliments au fil de la frappe.
-export function useRechercheAliments(texte: string) {
+// `version` : à augmenter pour relancer la même recherche (après avoir
+// modifié ou supprimé un aliment, la liste affichée serait périmée).
+export function useRechercheAliments(texte: string, version = 0) {
   const [resultats, setResultats] = useState<Aliment[]>([])
   const [enCours, setEnCours] = useState(false)
   const [erreur, setErreur] = useState<string | null>(null)
@@ -43,7 +45,8 @@ export function useRechercheAliments(texte: string) {
       annule = true
       window.clearTimeout(minuterie)
     }
-  }, [propre, assezLong])
+    // version est dans les dépendances : la changer relance l'effet.
+  }, [propre, assezLong, version])
 
   // Moins de 2 lettres : aucun résultat (calculé, pas d'état à remettre à zéro).
   return { resultats: assezLong ? resultats : [], enCours: assezLong && enCours, erreur }

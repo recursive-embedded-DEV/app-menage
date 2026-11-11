@@ -24,7 +24,8 @@ export interface Aliment extends Valeurs {
   // (journal et recettes). Calculé par supabase/nutrition-c.sql pour le FCEN,
   // choisi par le membre pour un aliment perso.
   legume_libre: boolean
+  auteur_id: string | null // membre qui a créé l'aliment perso ; null pour le FCEN
 }
 
 // Ce qu'on fournit pour créer un aliment perso (la base complète le reste).
-export type NouvelAliment = Omit<Aliment, 'id' | 'source' | 'groupe'>
+export type NouvelAliment = Omit<Aliment, 'id' | 'source' | 'groupe' | 'auteur_id'>

@@ -802,3 +802,23 @@ input:checked + span {
 .page-recette .bouton-liste {
     margin: 8px 0;
 }
+
+/* Confirmation de suppression intégrée à une fiche (aliment perso). */
+.confirmation-suppression {
+    background-color: #fdecea;
+    border-radius: 8px;
+    margin-top: 8px;
+    padding: 8px 12px;
+}
+
+.confirmation-suppression p {
+    margin: 0 0 8px;
+}
+
+.bouton-danger {
+    background-color: #B3261E;
+}
+
+.bouton-danger:hover {
+    background-color: #8C1D18;
+}
