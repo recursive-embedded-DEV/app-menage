@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import NavBar from '../composants/NavBar'
 import EditeurIngredients from '../composants/EditeurIngredients'
 import { RecetteUtilisee, enregistrerRecette, identifiantLibre, supprimerRecette } from '../data/donnees'
+import { supprimerImageRecette, televerserImageRecette } from '../data/images'
+import { reduireImage } from '../utils/images'
+import { cheminImage } from '../utils/temps'
 import { useRecette } from '../hooks/useRecettes'
 import type { Brouillon } from '../utils/edition-recette'
 import { brouillonVide, creerIdentifiant, validerBrouillon, versBrouillon } from '../utils/edition-recette'
@@ -44,6 +47,28 @@ function FormulaireRecette({ depart, idExistant }: PropsFormulaire) {
   const [enCours, setEnCours] = useState(false)
   const [erreur, setErreur] = useState<string | null>(null)
   const [confirmerSuppression, setConfirmerSuppression] = useState(false)
+  // Nouvelle photo choisie (pas encore envoyée) et son aperçu local.
+  const [photo, setPhoto] = useState<File | null>(null)
+  const [apercu, setApercu] = useState<string | null>(null)
+  // Adresse locale (blob:) de l'aperçu actuel, à libérer quand elle ne sert
+  // plus (sinon : fuite de mémoire). Une ref : la lire ne provoque aucun rendu.
+  const adresseApercu = useRef<string | null>(null)
+
+  // Calculé au moment du choix (et non dans un effet : un seul rendu).
+  function changerPhoto(fichier: File | null) {
+    if (adresseApercu.current) URL.revokeObjectURL(adresseApercu.current)
+    adresseApercu.current = fichier ? URL.createObjectURL(fichier) : null
+    setPhoto(fichier)
+    setApercu(adresseApercu.current)
+  }
+
+  // En quittant la page : libérer la dernière adresse d'aperçu.
+  useEffect(
+    () => () => {
+      if (adresseApercu.current) URL.revokeObjectURL(adresseApercu.current)
+    },
+    [],
+  )
 
   // Change quelques champs du brouillon (nouvel objet : jamais en place).
   const maj = (champs: Partial<Brouillon>) => setB((actuel) => ({ ...actuel, ...champs }))
@@ -61,7 +86,14 @@ function FormulaireRecette({ depart, idExistant }: PropsFormulaire) {
       // Nouvelle recette : identifiant libre (« pain-aux-bananes-2 » si besoin).
       // Modification : l'identifiant ne change pas (l'adresse reste valide).
       const id = idExistant ?? (await identifiantLibre(validation.recette.id))
-      await enregistrerRecette({ ...validation.recette, id })
+      // Nouvelle photo : réduite sur l'appareil, puis envoyée vers Storage.
+      // Seulement maintenant, car l'identifiant d'une nouvelle recette n'est
+      // connu qu'à l'enregistrement.
+      const image = photo ? await televerserImageRecette(await reduireImage(photo), id) : b.image
+      await enregistrerRecette({ ...validation.recette, id, image })
+      // L'ancienne photo (Storage) ne sert plus : on la supprime, sans bloquer
+      // si ça échoue (un fichier orphelin n'empêche rien de fonctionner).
+      if (depart.image && depart.image !== image) supprimerImageRecette(depart.image).catch(() => {})
       naviguer(`/recettes/${id}`, { replace: true })
     } catch {
       setErreur("La recette n'a pas été enregistrée. Vérifie ta connexion.")
@@ -100,6 +132,32 @@ function FormulaireRecette({ depart, idExistant }: PropsFormulaire) {
             Titre
             <input type="text" value={b.titre} onChange={(e) => maj({ titre: e.target.value })} required />
           </label>
+
+          <fieldset>
+            <legend>Photo (facultatif)</legend>
+            {(apercu ?? b.image) && (
+              <img className="apercu-photo" src={apercu ?? cheminImage(b.image)} alt="Aperçu de la photo" />
+            )}
+            {/* accept="image/*" : sur téléphone, propose l'appareil photo ou la galerie. */}
+            <input
+              type="file"
+              accept="image/*"
+              aria-label="Choisir une photo"
+              onChange={(e) => changerPhoto(e.target.files?.[0] ?? null)}
+            />
+            {(photo || b.image) && (
+              <button
+                type="button"
+                className="bouton-discret"
+                onClick={() => {
+                  changerPhoto(null)
+                  maj({ image: '' })
+                }}
+              >
+                Retirer la photo
+              </button>
+            )}
+          </fieldset>
 
           <fieldset>
             <legend>Temps (minutes ; 0 si l'étape n'existe pas)</legend>

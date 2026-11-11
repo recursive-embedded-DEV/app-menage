@@ -65,6 +65,20 @@ export default defineConfig(({ command, isPreview }) => ({
                             expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 }, // 30 jours
                         },
                     },
+                    // PHOTOS de recettes ajoutées dans l'app (Supabase Storage, public).
+                    // Même règle que les images de public/img/ : une adresse ne change
+                    // jamais de contenu (nouvelle photo = nouvelle adresse).
+                    {
+                        urlPattern: ({ url }) =>
+                            url.hostname.endsWith('.supabase.co') &&
+                            url.pathname.startsWith('/storage/v1/object/public/images-recettes/'),
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'photos-recettes',
+                            expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 }, // 30 jours
+                            cacheableResponse: { statuses: [200] },
+                        },
+                    },
                     // RECETTES (exception assumée, décision de Mathieu) : elles sont
                     // publiques et doivent rester consultables hors ligne, comme quand
                     // elles étaient dans le code. NetworkFirst : le réseau d'abord ;

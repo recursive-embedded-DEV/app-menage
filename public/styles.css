@@ -941,3 +941,11 @@ a.fab {
     flex-wrap: wrap;
     gap: 8px 16px;
 }
+
+/* Aperçu de la photo dans le formulaire de recette. */
+.apercu-photo {
+    border-radius: 12px;
+    height: 160px;
+    object-fit: cover;
+    width: 100%;
+}

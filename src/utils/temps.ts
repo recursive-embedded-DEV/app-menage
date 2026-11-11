@@ -1,4 +1,5 @@
 import type { Recette } from '../types/recette'
+import { estImageEnLigne } from './images'
 
 // 25 → "25 min" · 60 → "1 h" · 255 → "4 h 15" · 725 → "12 h 05"
 export function formaterDuree(minutes: number): string {
@@ -15,8 +16,10 @@ export function tempsTotal(recette: Pick<Recette, 'temps'>): number {
   return t.preparation_min + t.cuisson_min + t.repos_min
 }
 
-// Chemin d'une image de public/img/. BASE_URL vaut "/" en développement
-// et "/app-menage/" une fois déployé sur GitHub Pages.
+// Adresse d'une image de recette. Une photo ajoutée dans l'app est déjà une
+// adresse complète (Supabase Storage). Sinon, c'est un fichier de public/img/ :
+// BASE_URL vaut "/" en développement et "/app-menage/" sur GitHub Pages.
 export function cheminImage(fichier: string): string {
+  if (estImageEnLigne(fichier)) return fichier
   return `${import.meta.env.BASE_URL}img/${fichier}`
 }
