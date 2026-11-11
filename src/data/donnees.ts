@@ -1,5 +1,6 @@
 import type { Aliment } from '../types/aliment'
 import type { Groupe, Recette, ResumeRecette } from '../types/recette'
+import type { RecetteAEnregistrer } from '../utils/edition-recette'
 import { grouperParSection } from '../utils/recettes'
 import { COLONNES_ALIMENT } from './aliments'
 import { supabase } from './supabase'
@@ -76,4 +77,41 @@ export async function chargerRecette(id: string): Promise<Recette | undefined> {
   const { data, error } = await supabase.from('recettes').select(COLONNES_RECETTE).eq('id', id).maybeSingle()
   if (error) throw error
   return data ? versRecette(data as unknown as LigneRecette) : undefined
+}
+
+// ---------------------------------------------------------------------
+// Écriture (membres du ménage seulement : règles RLS).
+// ---------------------------------------------------------------------
+
+// Erreur précise : la recette est dans un journal (clé étrangère RESTRICT).
+export class RecetteUtilisee extends Error {}
+
+// Recette + ingrédients en UNE transaction (fonction SQL enregistrer_recette) :
+// tout est enregistré, ou rien. Renvoie l'identifiant de la recette.
+export async function enregistrerRecette(recette: RecetteAEnregistrer): Promise<string> {
+  const { data, error } = await supabase.rpc('enregistrer_recette', { recette })
+  if (error) throw error
+  return data as string
+}
+
+// Pour une NOUVELLE recette : « pain-aux-bananes » s'il est libre, sinon
+// « pain-aux-bananes-2 », « -3 »… La fonction SQL fait un « upsert » : sans
+// cette vérification, une nouvelle recette du même titre REMPLACERAIT l'autre.
+export async function identifiantLibre(base: string): Promise<string> {
+  const { data, error } = await supabase.from('recettes').select('id').like('id', `${base}%`)
+  if (error) throw error
+  const pris = new Set((data as { id: string }[]).map((r) => r.id))
+  if (!pris.has(base)) return base
+  let n = 2
+  while (pris.has(`${base}-${n}`)) n++
+  return `${base}-${n}`
+}
+
+export async function supprimerRecette(id: string): Promise<void> {
+  // .select('id') : vérifie qu'une ligne a vraiment été supprimée (RLS
+  // refuserait sans erreur). Les ingrédients suivent (on delete cascade).
+  const { data, error } = await supabase.from('recettes').delete().eq('id', id).select('id')
+  if (error?.code === '23503') throw new RecetteUtilisee() // dans un journal
+  if (error) throw error
+  if (!data || data.length === 0) throw new Error("La recette n'a pas pu être supprimée.")
 }

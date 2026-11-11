@@ -63,6 +63,12 @@ function ContenuRecette({ recette }: { recette: Recette }) {
     <div className="page-recette">
       <nav className="barre-retour">
         <Link to="/recettes" className="bouton">← Retour</Link>
+        {/* Modifier : membres connectés (la route et la base le vérifient aussi). */}
+        {connexion === 'connecte' && (
+          <Link to={`/recettes/${recette.id}/modifier`} className="bouton">
+            ✏️ Modifier
+          </Link>
+        )}
       </nav>
 
       <header className="entete-app">

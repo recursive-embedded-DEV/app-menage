@@ -1,9 +1,12 @@
+import { Link } from 'react-router'
 import CarteRecette from '../composants/CarteRecette'
 import NavBar from '../composants/NavBar'
+import { useConnexion } from '../hooks/useConnexion'
 import { useRecettes } from '../hooks/useRecettes'
 
 export default function ListeRecettes() {
   const { recettes, chargement, erreur } = useRecettes()
+  const connexion = useConnexion()
 
   return (
     <div className="page-liste">
@@ -19,8 +22,12 @@ export default function ListeRecettes() {
           ))}
         </ul>
       </main>
-      {/* Pas encore fonctionnel : l'ajout viendra à l'étape R3 */}
-      <button type="button" className="fab" aria-label="Créer une recette">+</button>
+      {/* Ajouter une recette : membres connectés seulement. */}
+      {connexion === 'connecte' && (
+        <Link to="/recettes/nouvelle" className="fab" aria-label="Ajouter une recette">
+          +
+        </Link>
+      )}
       <NavBar />
     </div>
   )

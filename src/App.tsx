@@ -15,6 +15,7 @@ const PageAliments = lazy(() => import('./pages/PageAliments'))
 const PageJournal = lazy(() => import('./pages/PageJournal'))
 const PageObjectifs = lazy(() => import('./pages/PageObjectifs'))
 const PageProfil = lazy(() => import('./pages/PageProfil'))
+const PageEditionRecette = lazy(() => import('./pages/PageEditionRecette'))
 
 // Le « standard » de l'app : quelle adresse affiche quelle page.
 // HashRouter met la route après un # (ex. index.html#/listes/epicerie),
@@ -41,6 +42,10 @@ export default function App() {
         <Route path="/nutrition/:date" element={<RouteProtegee><PageJournal /></RouteProtegee>} />
         <Route path="/recettes" element={<ListeRecettes />} />
         <Route path="/recettes/:id" element={<PageRecette />} />
+        {/* Ajout et modification : membres seulement. React Router préfère la
+            route fixe « nouvelle » à la route variable « :id ». */}
+        <Route path="/recettes/nouvelle" element={<RouteProtegee><PageEditionRecette /></RouteProtegee>} />
+        <Route path="/recettes/:id/modifier" element={<RouteProtegee><PageEditionRecette /></RouteProtegee>} />
         {/* Toute autre adresse : retour aux listes */}
         <Route path="*" element={<Navigate to="/listes" replace />} />
       </Routes>

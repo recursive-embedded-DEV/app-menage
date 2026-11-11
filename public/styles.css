@@ -526,7 +526,9 @@ input:checked + span {
 .grille-valeurs {
     display: grid;
     gap: 8px;
-    grid-template-columns: 1fr 1fr;
+    /* minmax(0, 1fr) : la colonne peut rétrécir sous la largeur par défaut
+       d'un <input> (≈ 20 caractères) ; avec 1fr seul, elle déborde. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 
 
@@ -821,4 +823,121 @@ input:checked + span {
 
 .bouton-danger:hover {
     background-color: #8C1D18;
+}
+
+/* Barre du haut avec deux boutons (← Retour · ✏️ Modifier). */
+.barre-retour {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+/* Le bouton + peut aussi être un lien (<a class="fab">). */
+a.fab {
+    text-decoration: none;
+}
+
+.formulaire textarea {
+    border: 1px solid lightgray;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 16px;
+    padding: 8px;
+    resize: vertical;
+}
+
+
+/* === Formulaire de recette (R3) === */
+.page-edition-recette main {
+    padding: 12px;
+}
+
+.grille-temps {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Une section d'ingrédients ou d'étapes, encadrée. */
+.formulaire .groupe-edition {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 10px;
+}
+
+.ligne-ingredient {
+    border-bottom: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 8px;
+}
+
+.grille-ingredient {
+    display: grid;
+    gap: 6px;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+
+.grille-ingredient input {
+    border: 1px solid lightgray;
+    border-radius: 6px;
+    font-size: 16px;
+    min-width: 0;
+    padding: 8px;
+}
+
+.actions-ingredient {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.85em;
+    gap: 4px 12px;
+}
+
+.actions-ingredient .deplacement {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.bouton-discret:disabled {
+    cursor: default;
+    opacity: 0.3;
+}
+
+/* La boîte « Ajouter un aliment de la base » peut lister 20 résultats : elle défile. */
+#dialogue-ingredient {
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+/* Un champ de formulaire ne dépasse jamais sa colonne. */
+.formulaire input,
+.formulaire select,
+.formulaire textarea {
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* Quantité d'un ingrédient relié : un bouton (rouvre la boîte), présenté comme un champ. */
+.quantite-reliee {
+    background-color: #f7f7f7;
+    border: 1px dashed lightgray;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: inherit;
+    padding: 8px;
+    text-align: left;
+}
+
+.ajouts-ingredient {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
 }
