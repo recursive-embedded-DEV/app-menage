@@ -10,10 +10,10 @@
       {
         "section": "",
         "items": [
-          { "nom": "Macaroni Protéine+, Catelli", "quantite": "1 boîte" },
-          { "nom": "Dinde, hachée", "quantite": "450 g" },
+          { "nom": "Macaroni Protéine+, Catelli", "quantite": "1 boîte", "fcen": 4516, "grammes": 340 },
+          { "nom": "Dinde, hachée", "quantite": "450 g", "fcen": 754, "grammes": 450 },
           { "nom": "Légumes variés, frais ou congelés", "quantite": "Au goût" },
-          { "nom": "Sauce tomate", "quantite": "2 tasses" },
+          { "nom": "Sauce tomate", "quantite": "2 tasses", "fcen": 5557, "grammes": 515.6 },
           { "nom": "Sel et poivre", "quantite": "Au goût" }
         ]
       }
@@ -42,15 +42,15 @@
       {
         "section": "",
         "items": [
-          { "nom": "Riz blanc, cuit", "quantite": "200 g" },
-          { "nom": "Poke au saumon, DOM Reserve", "quantite": "2 portions" },
-          { "nom": "Carottes moyennes, râpées", "quantite": "2" },
-          { "nom": "Mini-concombres, coupés en quartier", "quantite": "2" },
-          { "nom": "Fraises, effilées", "quantite": "80 g" },
-          { "nom": "Edamames", "quantite": "80 g" },
+          { "nom": "Riz blanc, cuit", "quantite": "200 g", "fcen": 4475, "grammes": 200 },
+          { "nom": "Poke au saumon, DOM Reserve", "quantite": "2 portions", "fcen": 3182, "grammes": 250 },
+          { "nom": "Carottes moyennes, râpées", "quantite": "2", "fcen": 2380, "grammes": 122 },
+          { "nom": "Mini-concombres, coupés en quartier", "quantite": "2", "fcen": 2363, "grammes": 200 },
+          { "nom": "Fraises, effilées", "quantite": "80 g", "fcen": 1749, "grammes": 80 },
+          { "nom": "Edamames", "quantite": "80 g", "fcen": 2209, "grammes": 80 },
           { "nom": "Laitue", "quantite": "Au goût" },
           { "nom": "Coriandre", "quantite": "Au goût" },
-          { "nom": "Mayo épicée", "quantite": "1 c. à table" }
+          { "nom": "Mayo épicée", "quantite": "1 c. à table", "fcen": 531, "grammes": 14 }
         ]
       }
     ],
@@ -78,8 +78,8 @@
       {
         "section": "Pour les carottes et les radis marinés",
         "items": [
-          { "nom": "Petites carottes, pelées et coupées en bâtonnets", "quantite": "3" },
-          { "nom": "Radis roses, finement émincés", "quantite": "3" },
+          { "nom": "Petites carottes, pelées et coupées en bâtonnets", "quantite": "3", "fcen": 2380, "grammes": 150 },
+          { "nom": "Radis roses, finement émincés", "quantite": "3", "fcen": 2443, "grammes": 13.5 },
           { "nom": "Vinaigre", "quantite": "250 mL" },
           { "nom": "Sucre", "quantite": "30 mL" },
           { "nom": "Sel", "quantite": "2,5 mL" }
@@ -88,11 +88,11 @@
       {
         "section": "Pour la vinaigrette",
         "items": [
-          { "nom": "Jus de lime", "quantite": "3 c. à soupe" },
-          { "nom": "Sauce soya", "quantite": "2 c. à soupe" },
-          { "nom": "Sucre", "quantite": "2 c. à soupe" },
-          { "nom": "Sauce de poisson", "quantite": "1 c. à soupe" },
-          { "nom": "Piment thaï, épépiné et finement émincé", "quantite": "1/2" }
+          { "nom": "Jus de lime", "quantite": "3 c. à soupe", "fcen": 1594, "grammes": 46.8 },
+          { "nom": "Sauce soya", "quantite": "2 c. à soupe", "fcen": 3403, "grammes": 32.4 },
+          { "nom": "Sucre", "quantite": "2 c. à soupe", "fcen": 4318, "grammes": 25.4 },
+          { "nom": "Sauce de poisson", "quantite": "1 c. à soupe", "fcen": 4731, "grammes": 18.2 },
+          { "nom": "Piment thaï, épépiné et finement émincé", "quantite": "1/2", "fcen": 4858, "grammes": 3 }
         ]
       },
       {
@@ -105,22 +105,22 @@
       {
         "section": "Pour les boulettes",
         "items": [
-          { "nom": "Porc haché", "quantite": "450 g" },
-          { "nom": "Coriandre haché", "quantite": "2 c. à soupe" },
-          { "nom": "Ciboulette, finement haché", "quantite": "2 c. à soupe" },
-          { "nom": "Gousses d'ail, finement haché", "quantite": "2" },
-          { "nom": "Sel fin", "quantite": "1 c. à thé" },
-          { "nom": "Sambal oelek", "quantite": "1/2 c. à thé" },
-          { "nom": "Poivre du moulin", "quantite": "1/4 c. à thé" },
-          { "nom": "Huile de canola", "quantite": "1 c. à soupe" }
+          { "nom": "Porc haché", "quantite": "450 g", "fcen": 6121, "grammes": 450 },
+          { "nom": "Coriandre haché", "quantite": "2 c. à soupe", "fcen": 2067, "grammes": 2 },
+          { "nom": "Ciboulette, finement haché", "quantite": "2 c. à soupe", "fcen": 2059, "grammes": 6 },
+          { "nom": "Gousses d'ail, finement haché", "quantite": "2", "fcen": 2394, "grammes": 6 },
+          { "nom": "Sel fin", "quantite": "1 c. à thé", "fcen": 214, "grammes": 6.1 },
+          { "nom": "Sambal oelek", "quantite": "1/2 c. à thé", "fcen": 7593, "grammes": 3.3 },
+          { "nom": "Poivre du moulin", "quantite": "1/4 c. à thé", "fcen": 198, "grammes": 0.6 },
+          { "nom": "Huile de canola", "quantite": "1 c. à soupe", "fcen": 451, "grammes": 14.2 }
         ]
       },
       {
         "section": "Pour le service",
         "items": [
-          { "nom": "Concombres libanais, taillés en rubans", "quantite": "2" },
-          { "nom": "Feuilles de coriandre", "quantite": "1/2 tasse" },
-          { "nom": "Feuilles de menthe fraîche", "quantite": "1/2 tasse" },
+          { "nom": "Concombres libanais, taillés en rubans", "quantite": "2", "fcen": 2363, "grammes": 240 },
+          { "nom": "Feuilles de coriandre", "quantite": "1/2 tasse", "fcen": 2067, "grammes": 8.5 },
+          { "nom": "Feuilles de menthe fraîche", "quantite": "1/2 tasse", "fcen": 4725, "grammes": 10 },
           { "nom": "Arachides salées, concassées", "quantite": "Au goût" }
         ]
       }
@@ -176,16 +176,16 @@
       {
         "section": "",
         "items": [
-          { "nom": "Farine de blé entier ou d'épeautre", "quantite": "1 tasse" },
-          { "nom": "Flocons d'avoine à cuisson rapide", "quantite": "3/4 tasse" },
-          { "nom": "Graines de chia entières", "quantite": "2 c. à soupe" },
-          { "nom": "Poudre à pâte", "quantite": "2 c. à thé" },
-          { "nom": "Bicarbonate de soude", "quantite": "1/2 c. à thé" },
-          { "nom": "Sel", "quantite": "1/2 c. à thé" },
-          { "nom": "Bananes mûres, en purée", "quantite": "4" },
-          { "nom": "Huile de coco", "quantite": "1/3 tasse" },
-          { "nom": "Sirop d'érable (optionnel)", "quantite": "2 c. à soupe" },
-          { "nom": "Extrait de vanille", "quantite": "1 c. à thé" },
+          { "nom": "Farine de blé entier ou d'épeautre", "quantite": "1 tasse", "fcen": 4500, "grammes": 126.8 },
+          { "nom": "Flocons d'avoine à cuisson rapide", "quantite": "3/4 tasse", "fcen": 1439, "grammes": 79.2 },
+          { "nom": "Graines de chia entières", "quantite": "2 c. à soupe", "fcen": 2511, "grammes": 21.6 },
+          { "nom": "Poudre à pâte", "quantite": "2 c. à thé", "fcen": 4003, "grammes": 9.4 },
+          { "nom": "Bicarbonate de soude", "quantite": "1/2 c. à thé", "fcen": 4005, "grammes": 2.4 },
+          { "nom": "Sel", "quantite": "1/2 c. à thé", "fcen": 214, "grammes": 3.1 },
+          { "nom": "Bananes mûres, en purée", "quantite": "4", "fcen": 1704, "grammes": 472 },
+          { "nom": "Huile de coco", "quantite": "1/3 tasse", "fcen": 420, "grammes": 76.8 },
+          { "nom": "Sirop d'érable (optionnel)", "quantite": "2 c. à soupe", "fcen": 6175, "grammes": 40.6 },
+          { "nom": "Extrait de vanille", "quantite": "1 c. à thé", "fcen": 216, "grammes": 4.3 },
           { "nom": "Pépites de chocolat (optionnel)", "quantite": "Au goût" }
         ]
       }
@@ -215,18 +215,18 @@
       {
         "section": "Gel de chia (à préparer 20 à 30 min d'avance)",
         "items": [
-          { "nom": "Graines de chia entières", "quantite": "25 g (≈ 2 c. à soupe)" },
+          { "nom": "Graines de chia entières", "quantite": "25 g (≈ 2 c. à soupe)", "fcen": 2511, "grammes": 25 },
           { "nom": "Eau tiède, prélevée sur l'eau des ingrédients humides", "quantite": "1/3 tasse" }
         ]
       },
       {
         "section": "Ingrédients secs",
         "items": [
-          { "nom": "Farine de blé entier", "quantite": "2 tasses" },
-          { "nom": "Farine tout usage non blanchie", "quantite": "2 tasses" },
-          { "nom": "Lin moulu", "quantite": "25 g (≈ 3 1/2 c. à soupe)" },
-          { "nom": "Sel", "quantite": "1 1/4 c. à thé" },
-          { "nom": "Farine en réserve, pour ajuster au pétrissage", "quantite": "1/2 à 1 tasse" }
+          { "nom": "Farine de blé entier", "quantite": "2 tasses", "fcen": 4500, "grammes": 253.6 },
+          { "nom": "Farine tout usage non blanchie", "quantite": "2 tasses", "fcen": 6642, "grammes": 264.2 },
+          { "nom": "Lin moulu", "quantite": "25 g (≈ 3 1/2 c. à soupe)", "fcen": 4528, "grammes": 25 },
+          { "nom": "Sel", "quantite": "1 1/4 c. à thé", "fcen": 214, "grammes": 7.6 },
+          { "nom": "Farine en réserve, pour ajuster au pétrissage", "quantite": "1/2 à 1 tasse", "fcen": 6642, "grammes": 66 }
         ]
       },
       {
@@ -234,8 +234,8 @@
         "items": [
           { "nom": "Eau tiède, au total (dont 1/3 tasse pour le gel de chia)", "quantite": "1 1/2 tasse" },
           { "nom": "Levure instantanée", "quantite": "8 g (≈ 2 1/4 c. à thé)" },
-          { "nom": "Sirop d'érable", "quantite": "1/4 tasse" },
-          { "nom": "Beurre fondu", "quantite": "1/4 tasse" }
+          { "nom": "Sirop d'érable", "quantite": "1/4 tasse", "fcen": 6175, "grammes": 84.6 },
+          { "nom": "Beurre fondu", "quantite": "1/4 tasse", "fcen": 118, "grammes": 60 }
         ]
       },
       {
@@ -284,13 +284,13 @@
       {
         "section": "",
         "items": [
-          { "nom": "Oignons, coupés en dés", "quantite": "1/2" },
-          { "nom": "Gingembre frais haché", "quantite": "1 c. à thé" },
-          { "nom": "Gousses d'ail, hachées", "quantite": "3" },
-          { "nom": "Huile d'olive", "quantite": "3 c. à soupe" },
-          { "nom": "Courge Butternut, pelée, épépinée et coupée en dés", "quantite": "1 kg" },
+          { "nom": "Oignons, coupés en dés", "quantite": "1/2", "fcen": 2401, "grammes": 55 },
+          { "nom": "Gingembre frais haché", "quantite": "1 c. à thé", "fcen": 2091, "grammes": 2 },
+          { "nom": "Gousses d'ail, hachées", "quantite": "3", "fcen": 2394, "grammes": 9 },
+          { "nom": "Huile d'olive", "quantite": "3 c. à soupe", "fcen": 422, "grammes": 41.1 },
+          { "nom": "Courge Butternut, pelée, épépinée et coupée en dés", "quantite": "1 kg", "fcen": 2451, "grammes": 1000 },
           { "nom": "Eau", "quantite": "4 tasses" },
-          { "nom": "Poudre de bouillon de légumes", "quantite": "3 c. à soupe" },
+          { "nom": "Poudre de bouillon de légumes", "quantite": "3 c. à soupe", "fcen": 972, "grammes": 18 },
           { "nom": "Sel et poivre", "quantite": "Au goût" }
         ]
       }
@@ -319,9 +319,9 @@
       {
         "section": "",
         "items": [
-          { "nom": "Tortilla de farine", "quantite": "1" },
-          { "nom": "Fromage cheddar fort râpé", "quantite": "4 c. à soupe" },
-          { "nom": "Poulet cuit", "quantite": "1/2 tasse" },
+          { "nom": "Tortilla de farine", "quantite": "1", "fcen": 4049, "grammes": 72 },
+          { "nom": "Fromage cheddar fort râpé", "quantite": "4 c. à soupe", "fcen": 7735, "grammes": 28.7 },
+          { "nom": "Poulet cuit", "quantite": "1/2 tasse", "fcen": 567, "grammes": 71.3 },
           { "nom": "Oignons verts", "quantite": "Au goût" },
           { "nom": "Épices, au choix", "quantite": "Au goût" }
         ]
@@ -351,13 +351,13 @@
       {
         "section": "",
         "items": [
-          { "nom": "Yogourt grec protéiné", "quantite": "300 g" },
-          { "nom": "Gruau d'avoine", "quantite": "1/2 tasse" },
-          { "nom": "Lait d'avoine", "quantite": "1/2 tasse" },
-          { "nom": "Graines de chia", "quantite": "2 c. à table" },
-          { "nom": "Poudre de cacao", "quantite": "1 c. à table" },
+          { "nom": "Yogourt grec protéiné", "quantite": "300 g", "fcen": 6979, "grammes": 300 },
+          { "nom": "Gruau d'avoine", "quantite": "1/2 tasse", "fcen": 1462, "grammes": 55.5 },
+          { "nom": "Lait d'avoine", "quantite": "1/2 tasse", "fcen": 7808, "grammes": 125.1 },
+          { "nom": "Graines de chia", "quantite": "2 c. à table", "fcen": 2511, "grammes": 21.6 },
+          { "nom": "Poudre de cacao", "quantite": "1 c. à table", "fcen": 4223, "grammes": 5.4 },
           { "nom": "Sirop d'érable sans sucre", "quantite": "1 c. à thé" },
-          { "nom": "Extrait de vanille", "quantite": "1 c. à thé" }
+          { "nom": "Extrait de vanille", "quantite": "1 c. à thé", "fcen": 216, "grammes": 4.3 }
         ]
       }
     ],
@@ -385,24 +385,24 @@
       {
         "section": "",
         "items": [
-          { "nom": "Haricots frits", "quantite": "1 conserve de 546 mL (19 oz)" },
-          { "nom": "Poudre de chili", "quantite": "1 c. à soupe" },
-          { "nom": "Paprika fumé", "quantite": "2 c. à thé" },
-          { "nom": "Cumin moulu", "quantite": "1 c. à thé" },
-          { "nom": "Gousse d'ail", "quantite": "1" },
+          { "nom": "Haricots frits", "quantite": "1 conserve de 546 mL (19 oz)", "fcen": 3314, "grammes": 583.7 },
+          { "nom": "Poudre de chili", "quantite": "1 c. à soupe", "fcen": 177, "grammes": 7.6 },
+          { "nom": "Paprika fumé", "quantite": "2 c. à thé", "fcen": 196, "grammes": 4.2 },
+          { "nom": "Cumin moulu", "quantite": "1 c. à thé", "fcen": 182, "grammes": 2.1 },
+          { "nom": "Gousse d'ail", "quantite": "1", "fcen": 2394, "grammes": 3 },
           { "nom": "Sel", "quantite": "Au goût" },
-          { "nom": "Avocats mûrs", "quantite": "4" },
-          { "nom": "Oignon râpé", "quantite": "1/2" },
-          { "nom": "Jus de lime", "quantite": "1 c. à soupe" },
-          { "nom": "Crème sure", "quantite": "1 tasse" },
-          { "nom": "Fromage à la crème", "quantite": "1/2 tasse" },
-          { "nom": "Échalote, hachée finement", "quantite": "1/2" },
+          { "nom": "Avocats mûrs", "quantite": "4", "fcen": 1512, "grammes": 544 },
+          { "nom": "Oignon râpé", "quantite": "1/2", "fcen": 2401, "grammes": 55 },
+          { "nom": "Jus de lime", "quantite": "1 c. à soupe", "fcen": 1594, "grammes": 15.6 },
+          { "nom": "Crème sure", "quantite": "1 tasse", "fcen": 139, "grammes": 243 },
+          { "nom": "Fromage à la crème", "quantite": "1/2 tasse", "fcen": 28, "grammes": 122.5 },
+          { "nom": "Échalote, hachée finement", "quantite": "1/2", "fcen": 2326, "grammes": 15 },
           { "nom": "Poivre", "quantite": "Au goût" },
-          { "nom": "Salsa du commerce", "quantite": "1 2/3 tasse" },
-          { "nom": "Fromage Tex-Mex", "quantite": "1 tasse" },
-          { "nom": "Poivron rouge", "quantite": "1" },
-          { "nom": "Tomates italiennes, épépinées et coupées en petits dés", "quantite": "2" },
-          { "nom": "Oignons verts, ciselés", "quantite": "2" },
+          { "nom": "Salsa du commerce", "quantite": "1 2/3 tasse", "fcen": 1025, "grammes": 456.3 },
+          { "nom": "Fromage Tex-Mex", "quantite": "1 tasse", "fcen": 7041, "grammes": 113 },
+          { "nom": "Poivron rouge", "quantite": "1", "fcen": 2484, "grammes": 119 },
+          { "nom": "Tomates italiennes, épépinées et coupées en petits dés", "quantite": "2", "fcen": 2460, "grammes": 124 },
+          { "nom": "Oignons verts, ciselés", "quantite": "2", "fcen": 2144, "grammes": 30 },
           { "nom": "Huile d'olive extra vierge", "quantite": "Au goût" }
         ]
       }

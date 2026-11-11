@@ -35,7 +35,10 @@ export default function PageAliments() {
         {choisi && (
           <section className="carte fiche-aliment">
             <h2>{choisi.nom}</h2>
-            <p className="note-portions">{choisi.source === 'perso' ? 'Aliment du ménage' : choisi.groupe}</p>
+            <p className="note-portions">
+              {choisi.source === 'perso' ? 'Aliment du ménage' : choisi.groupe}
+              {choisi.legume_libre && ' · légume : non compté dans les totaux'}
+            </p>
             <p>
               <strong>Pour 100 g :</strong> {resumeValeurs(choisi)}
             </p>
@@ -61,7 +64,7 @@ export default function PageAliments() {
                 <span>{a.nom}</span>
                 <small>
                   {a.source === 'perso' ? '★ ' : ''}
-                  {formaterValeur(a.kcal, 'kcal')} kcal / 100 g
+                  {formaterValeur(a.kcal, 'kcal')} kcal / 100 g{a.legume_libre ? ' · légume, non compté' : ''}
                 </small>
               </button>
             </li>

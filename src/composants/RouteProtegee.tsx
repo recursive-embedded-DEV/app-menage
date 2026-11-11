@@ -1,6 +1,11 @@
 import type { ReactNode } from 'react'
+import { demarrerSynchroNutrition } from '../data/synchro-nutrition'
 import { useConnexion } from '../hooks/useConnexion'
 import PageConnexion from '../pages/PageConnexion'
+
+// Au premier chargement de ce composant (première page protégée) : l'onglet
+// Nutrition sera remis à jour à chaque connexion, sans passer par Mon profil.
+demarrerSynchroNutrition()
 
 // Enveloppe les routes réservées au ménage (les Listes).
 // Les Recettes ne passent pas par ici : elles restent publiques.

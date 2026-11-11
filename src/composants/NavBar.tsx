@@ -1,6 +1,5 @@
-import { useSyncExternalStore } from 'react'
 import { NavLink } from 'react-router'
-import { abonnerOngletNutrition, ongletNutritionActif } from '../data/cache-nutrition'
+import { useOngletNutrition } from '../hooks/useOngletNutrition'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -11,10 +10,10 @@ const BASE = import.meta.env.BASE_URL
 // Onglet Nutrition : affiché seulement si le membre l'a activé (Mon profil).
 // La valeur vient d'un cache LOCAL (data/cache-nutrition.ts), pas de Supabase :
 // NavBar est sur toutes les pages, et les Recettes ne téléchargent pas Supabase.
-// useSyncExternalStore abonne le composant à ce cache : l'onglet apparaît ou
-// disparaît dès que la préférence change, sans recharger la page.
+// useOngletNutrition s'abonne à ce cache : l'onglet apparaît ou disparaît dès
+// que la préférence change, sans recharger la page.
 export default function NavBar() {
-  const nutrition = useSyncExternalStore(abonnerOngletNutrition, ongletNutritionActif)
+  const nutrition = useOngletNutrition()
 
   return (
     <nav className="nav-bar">

@@ -766,3 +766,39 @@ input:checked + span {
 .interrupteur small {
     color: dimgray;
 }
+
+/* Case à cocher dans un .formulaire : en ligne (et non en colonne comme les champs). */
+.formulaire .interrupteur {
+    flex-direction: row;
+}
+
+.formulaire .interrupteur input {
+    padding: 0;
+}
+
+
+/* === Nutrition : valeur nutritive d'une recette (Phase C) === */
+.valeur-nutritive dl {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 8px 0;
+    text-align: center;
+}
+
+.valeur-nutritive dt {
+    color: dimgray;
+    font-size: 0.8em;
+}
+
+.valeur-nutritive dd {
+    color: var(--accent);
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Page de recette : les boutons pleine largeur (« J'en ai mangé », « Ajouter
+   les ingrédients à la liste d'épicerie ») se suivent ; on les espace. */
+.page-recette .bouton-liste {
+    margin: 8px 0;
+}

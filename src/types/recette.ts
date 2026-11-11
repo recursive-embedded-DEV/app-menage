@@ -5,6 +5,11 @@
 export interface Ingredient {
   nom: string;
   quantite: string; // texte libre : "450 g", "1/2 tasse", "Au goût"
+  // Lien vers la base d'aliments (module Nutrition), pour la recette DE BASE :
+  // code de l'aliment dans le FCEN et poids en grammes. Absents = ingrédient
+  // exclu du calcul (« Au goût », eau, aliment introuvable…).
+  fcen?: number;
+  grammes?: number;
 }
 
 // Générique : le même moule sert pour les ingrédients et pour les étapes.

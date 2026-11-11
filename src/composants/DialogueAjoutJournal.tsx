@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Aliment } from '../types/aliment'
-import type { ChangementsEntree, EntreeJournal, NouvelleEntree, Repas } from '../types/journal'
+import type { ChangementsEntree, EntreeAliment, NouvelleEntree, Repas } from '../types/journal'
 import { alimentsRecents } from '../data/journal'
 import { useRechercheAliments } from '../hooks/useRechercheAliments'
 import { heureLocale } from '../utils/dates'
@@ -20,7 +20,7 @@ import type { Unite } from '../utils/nutrition'
 
 interface Props {
   date: string
-  entree: EntreeJournal | null // null : ajout ; sinon : modification de cette entrée
+  entree: EntreeAliment | null // null : ajout ; sinon : modification de cette entrée (un aliment)
   onAjouter: (nouvelle: NouvelleEntree) => Promise<boolean>
   onModifier: (id: string, changements: ChangementsEntree) => Promise<boolean>
   onFerme: () => void
@@ -119,7 +119,7 @@ export default function DialogueAjoutJournal({ date, entree, onAjouter, onModifi
                     <span>{a.nom}</span>
                     <small>
                       {a.source === 'perso' ? '★ ' : ''}
-                      {formaterValeur(a.kcal, 'kcal')} kcal / 100 g
+                      {a.legume_libre ? 'légume, non compté' : `${formaterValeur(a.kcal, 'kcal')} kcal / 100 g`}
                     </small>
                   </button>
                 </li>
@@ -178,7 +178,8 @@ export default function DialogueAjoutJournal({ date, entree, onAjouter, onModifi
             </label>
             {apercu && (
               <p className="note-portions">
-                {formaterValeur(grammes, 'proteines_g')} g : {resumeValeurs(apercu)}
+                {formaterValeur(grammes, 'proteines_g')} g :{' '}
+                {aliment.legume_libre ? 'légume, non compté dans les totaux' : resumeValeurs(apercu)}
               </p>
             )}
           </>

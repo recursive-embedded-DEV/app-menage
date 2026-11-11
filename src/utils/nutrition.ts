@@ -23,9 +23,11 @@ export function valeursPour(pour100: Valeurs, grammes: number): Valeurs {
 
 // Somme des valeurs de plusieurs aliments consommés (le total d'un repas ou
 // d'une journée). Calculée à chaque affichage, jamais stockée.
-export function totaux(entrees: { aliment: Valeurs; grammes: number }[]): Valeurs {
+// Les LÉGUMES LIBRES ne comptent pas (règle décidée avec Mathieu).
+export function totaux(entrees: { aliment: Valeurs & { legume_libre?: boolean }; grammes: number }[]): Valeurs {
   const zero: Valeurs = { kcal: 0, proteines_g: 0, glucides_g: 0, lipides_g: 0 }
   return entrees.reduce((somme, { aliment, grammes }) => {
+    if (aliment.legume_libre) return somme
     const v = valeursPour(aliment, grammes)
     return {
       kcal: somme.kcal + v.kcal,
@@ -120,4 +122,87 @@ export function resumeValeurs(v: Valeurs): string {
   return CLES_VALEURS.map((cle) =>
     cle === 'kcal' ? `${formaterValeur(v.kcal, 'kcal')} kcal` : `${formaterValeur(v[cle], cle)} g ${LIBELLES_COURTS[cle]}`,
   ).join(' · ')
+}
+
+// ---------------------------------------------------------------------
+// Valeur nutritive d'une recette (Phase C) : à partir des ingrédients liés à
+// un aliment du FCEN (champs fcen + grammes de recettes.json).
+// ---------------------------------------------------------------------
+export interface ValeurRecette {
+  total: Valeurs // recette de base complète
+  parPortion: Valeurs // total ÷ portions de base
+  legumes: string[] // ingrédients libres (légumes) : non comptés
+  exclus: string[] // sans aliment ou introuvables : non comptés
+}
+
+export function valeurRecette(
+  recette: { portions: number; ingredients: { items: { nom: string; fcen?: number; grammes?: number }[] }[] },
+  alimentsParCode: Map<number, Valeurs & { legume_libre?: boolean }>,
+): ValeurRecette {
+  const comptes: { aliment: Valeurs; grammes: number }[] = []
+  const legumes: string[] = []
+  const exclus: string[] = []
+
+  for (const ing of recette.ingredients.flatMap((g) => g.items)) {
+    const aliment = ing.fcen === undefined ? undefined : alimentsParCode.get(ing.fcen)
+    if (!aliment || !ing.grammes) exclus.push(ing.nom)
+    else if (aliment.legume_libre) legumes.push(ing.nom)
+    else comptes.push({ aliment, grammes: ing.grammes })
+  }
+
+  const total = totaux(comptes)
+  const diviser = (n: number) => n / recette.portions
+  return {
+    total,
+    parPortion: {
+      kcal: diviser(total.kcal),
+      proteines_g: diviser(total.proteines_g),
+      glucides_g: diviser(total.glucides_g),
+      lipides_g: diviser(total.lipides_g),
+    },
+    legumes,
+    exclus,
+  }
+}
+
+// ---------------------------------------------------------------------
+// Journal avec recettes (Phase D) : une entrée est un aliment OU une recette.
+// ---------------------------------------------------------------------
+const ZERO: Valeurs = { kcal: 0, proteines_g: 0, glucides_g: 0, lipides_g: 0 }
+
+type EntreeCalculable =
+  | { type: 'aliment'; aliment: Valeurs & { legume_libre?: boolean }; grammes: number }
+  | { type: 'recette'; recette_id: string; portions: number }
+
+// Valeurs d'une entrée. Pour une recette : valeurs PAR PORTION (calculées par
+// valeurRecette, légumes libres déjà exclus) × nombre de portions.
+// Recette dont les valeurs ne sont pas encore chargées (ou disparue) : zéro.
+export function valeursEntree(e: EntreeCalculable, parPortion: Map<string, Valeurs>): Valeurs {
+  if (e.type === 'aliment') return totaux([e])
+  const v = parPortion.get(e.recette_id)
+  if (!v) return ZERO
+  return {
+    kcal: v.kcal * e.portions,
+    proteines_g: v.proteines_g * e.portions,
+    glucides_g: v.glucides_g * e.portions,
+    lipides_g: v.lipides_g * e.portions,
+  }
+}
+
+// Total de plusieurs entrées du journal (un repas, une journée).
+export function totauxJournal(entrees: EntreeCalculable[], parPortion: Map<string, Valeurs>): Valeurs {
+  return entrees.reduce((somme, e) => {
+    const v = valeursEntree(e, parPortion)
+    return {
+      kcal: somme.kcal + v.kcal,
+      proteines_g: somme.proteines_g + v.proteines_g,
+      glucides_g: somme.glucides_g + v.glucides_g,
+      lipides_g: somme.lipides_g + v.lipides_g,
+    }
+  }, ZERO)
+}
+
+// « 1 portion », « 1,5 portion », « 2 portions » (pluriel à partir de 2).
+export function textePortions(portions: number): string {
+  return `${formaterNombre(portions)} portion${portions >= 2 ? 's' : ''}`
 }

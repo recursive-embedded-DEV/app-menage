@@ -20,6 +20,10 @@ export interface Aliment extends Valeurs {
   nom: string
   groupe: string
   mesures: Mesure[]
+  // Légume « libre » : ne compte ni dans les calories ni dans les macros
+  // (journal et recettes). Calculé par supabase/nutrition-c.sql pour le FCEN,
+  // choisi par le membre pour un aliment perso.
+  legume_libre: boolean
 }
 
 // Ce qu'on fournit pour créer un aliment perso (la base complète le reste).

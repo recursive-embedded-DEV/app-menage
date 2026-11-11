@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router'
 import NavBar from '../composants/NavBar'
 import DialogueEpicerie from '../composants/DialogueEpicerie'
 import SelecteurPortions from '../composants/SelecteurPortions'
+import SectionNutritionRecette from '../composants/SectionNutritionRecette'
 import { trouverRecette } from '../data/donnees'
 import { useConnexion } from '../hooks/useConnexion'
 import type { Recette } from '../types/recette'
@@ -97,6 +98,9 @@ function ContenuRecette({ recette }: { recette: Recette }) {
             </div>
           ))}
         </div>
+
+        {/* Valeur nutritive et « J'en ai mangé » : membres seulement (base d'aliments protégée). */}
+        {connexion === 'connecte' && <SectionNutritionRecette recette={recette} />}
 
         {/* La liste d'épicerie est réservée au ménage : les Recettes, elles, sont publiques. */}
         {connexion === 'connecte' && <DialogueEpicerie recette={recette} portionsPage={portions} />}

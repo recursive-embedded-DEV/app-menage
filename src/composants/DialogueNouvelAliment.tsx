@@ -44,7 +44,13 @@ export default function DialogueNouvelAliment({ onCree }: Props) {
     setEnCours(true)
     setErreur(null)
     try {
-      const aliment = await creerAliment({ nom: texte('nom'), ...versPour100(parPortion, portion), mesures })
+      const aliment = await creerAliment({
+        nom: texte('nom'),
+        ...versPour100(parPortion, portion),
+        mesures,
+        // Case cochée : FormData contient « on » ; décochée : la clé est absente.
+        legume_libre: donnees.get('legume_libre') === 'on',
+      })
       dialogue.current?.close()
       onCree(aliment)
     } catch {
@@ -110,6 +116,14 @@ export default function DialogueNouvelAliment({ onCree }: Props) {
               </label>
             </div>
           </fieldset>
+          {/* Règle du ménage : les légumes ne comptent pas, sauf féculents et légumes gras. */}
+          <label className="interrupteur">
+            <input type="checkbox" name="legume_libre" />
+            <span>
+              <strong>Légume non compté</strong>
+              <small>Pas un féculent ni un aliment gras : exclu des calories et des macros.</small>
+            </span>
+          </label>
 
           {erreur && <p className="message-erreur">{erreur}</p>}
           <div className="dialogue-actions">
