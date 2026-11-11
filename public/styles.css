@@ -96,12 +96,16 @@ body {
        le fond blanc, lui, descend jusqu'au bord de l'écran. */
     padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+/* Style de la maquette « Agenda M&M » : icône au trait au-dessus d'un petit
+   libellé, trait bleu au-dessus de l'onglet actif. */
 .nav-bar a {
     align-items: center;
-    color: dimgray;
+    color: #6B7280;
     display: flex;
     flex-direction: column;
-    padding: 12px;
+    font-size: 12px;
+    gap: 4px;
+    padding: 10px 0;
     text-align: center;
     text-decoration: none;
 }
@@ -109,6 +113,9 @@ body {
 .nav-bar .active {
     border-top: 2px solid var(--bouton);
     color: var(--bouton);
+    font-weight: 600;
+    /* Le trait de 2 px ne décale pas l'icône : on retire 2 px en haut. */
+    padding-top: 8px;
 }
 
 .nav-bar li {
@@ -116,7 +123,7 @@ body {
 }
 
 .nav-bar ul {
-    border-top: 1px solid lightgray;
+    border-top: 1px solid #E5E7EB;
     display: flex;
 }
 
