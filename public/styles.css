@@ -349,3 +349,41 @@ input:checked + span {
 .bouton-retirer {
     margin-top: 12px;
 }
+
+
+/* === Connexion et messages (module Listes + Supabase) === */
+.page-connexion form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+}
+
+.page-connexion label {
+    color: var(--accent);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* 16 px minimum : en dessous, Safari sur iPhone zoome dans le champ. */
+.page-connexion input {
+    font-size: 16px;
+    padding: 8px;
+}
+
+/* Réutilisée par la connexion, l'accueil des listes et une liste. */
+.message-erreur {
+    color: #B3261E;
+}
+
+.bouton-deconnexion {
+    background: none;
+    border: none;
+    color: gray;
+    cursor: pointer;
+    display: block;
+    font-size: inherit;
+    margin: 24px auto 0;
+    text-decoration: underline;
+}

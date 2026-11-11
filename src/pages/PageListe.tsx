@@ -6,8 +6,12 @@ import { useListes } from '../hooks/useListes'
 
 export default function PageListe() {
   const { id } = useParams()
-  const { listes, ajouterArticle, basculerArticle, supprimerArticle, retirerCoches, ajouterLivre } = useListes()
+  const { listes, chargement, erreur, ajouterArticle, basculerArticle, supprimerArticle, retirerCoches, ajouterLivre } =
+    useListes()
   const liste = listes.find((l) => l.id === id)
+  // Pendant le chargement, la liste n'est pas encore là : sans ce test, on
+  // afficherait brièvement « Liste introuvable » à chaque ouverture.
+  const introuvable = !chargement && !liste
 
   return (
     // Les livres gardent leur classe à eux (vignettes en format portrait).
@@ -16,10 +20,12 @@ export default function PageListe() {
         <Link to="/listes" className="bouton">← Retour</Link>
       </nav>
       <header className="entete-app">
-        <h1>{liste ? liste.titre : 'Liste introuvable'}</h1>
+        <h1>{liste ? liste.titre : introuvable ? 'Liste introuvable' : 'Listes'}</h1>
       </header>
       <main>
-        {!liste && <p>Cette liste n'existe pas.</p>}
+        {erreur && <p className="message-erreur">{erreur}</p>}
+        {chargement && <p>Chargement…</p>}
+        {introuvable && <p>Cette liste n'existe pas.</p>}
 
         {/* Grâce à l'union discriminée, TypeScript sait que liste.articles
             existe dans la première branche, et liste.livres dans la seconde. */}

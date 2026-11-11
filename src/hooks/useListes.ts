@@ -1,59 +1,144 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { Livre, Liste } from '../types/liste'
-import { chargerListes, enregistrerListes } from '../data/stockage-listes'
+import {
+  chargerListes,
+  ecouterChangements,
+  insererArticle,
+  insererLivre,
+  modifierCoche,
+  supprimerArticle as supprimerArticleStocke,
+  supprimerCoches,
+} from '../data/stockage-listes'
 
 // Un « hook » maison : il regroupe l'état des listes ET toutes les
 // opérations permises dessus. Les composants n'ont qu'à l'appeler :
 //   const { listes, ajouterArticle } = useListes()
 export function useListes() {
-  // On passe la FONCTION chargerListes (sans parenthèses) : React ne
-  // l'appelle qu'une fois, au premier affichage, et pas à chaque rendu.
-  const [listes, setListes] = useState<Liste[]>(chargerListes)
+  // Les listes arrivent maintenant par le réseau : on démarre vide, avec
+  // un indicateur de chargement, et un message si quelque chose échoue.
+  const [listes, setListes] = useState<Liste[]>([])
+  const [chargement, setChargement] = useState(true)
+  const [erreur, setErreur] = useState<string | null>(null)
 
-  // Chaque fois que `listes` change, on enregistre.
+  // Va chercher l'état réel des listes dans la base.
+  // useCallback garde la MÊME fonction d'un rendu à l'autre, pour que
+  // l'useEffect ci-dessous ne se relance pas à chaque rendu.
+  // Les setState sont dans des rappels (.then, .catch…) : ils ne s'exécutent
+  // qu'à l'arrivée de la réponse du réseau, jamais pendant l'effet lui-même.
+  const recharger = useCallback(() => {
+    chargerListes()
+      .then((resultat) => {
+        setListes(resultat)
+        setErreur(null)
+      })
+      .catch(() => setErreur('Impossible de charger les listes. Vérifie ta connexion.'))
+      .finally(() => setChargement(false))
+  }, [])
+
   useEffect(() => {
-    enregistrerListes(listes)
-  }, [listes])
+    recharger()
 
-  // Règle d'or de React : on ne modifie jamais l'état directement.
-  // On fabrique une NOUVELLE liste (avec .map, ...) et on la donne à setListes.
-  function modifierListe(id: string, transformer: (liste: Liste) => Liste) {
-    setListes((actuelles) => actuelles.map((l) => (l.id === id ? transformer(l) : l)))
+    // Plusieurs événements arrivent souvent d'un coup (ex. « Retirer les
+    // articles cochés » supprime plusieurs lignes) : on attend 300 ms
+    // d'accalmie avant de recharger, une seule fois.
+    let minuterie: number | undefined
+    const rechargerBientot = () => {
+      window.clearTimeout(minuterie)
+      minuterie = window.setTimeout(recharger, 300)
+    }
+
+    // 1. Temps réel : un changement fait sur l'autre téléphone.
+    const arreterEcoute = ecouterChangements(rechargerBientot)
+
+    // 2. Retour dans l'app (téléphone déverrouillé, onglet réaffiché) :
+    // la connexion temps réel a pu être coupée pendant la veille.
+    const surVisibilite = () => {
+      if (document.visibilityState === 'visible') rechargerBientot()
+    }
+    document.addEventListener('visibilitychange', surVisibilite)
+
+    // Nettoyage quand la page se démonte : sinon les écoutes s'accumulent.
+    return () => {
+      window.clearTimeout(minuterie)
+      arreterEcoute()
+      document.removeEventListener('visibilitychange', surVisibilite)
+    }
+  }, [recharger])
+
+  // MISE À JOUR OPTIMISTE :
+  //   1. on change l'écran tout de suite (même transformation qu'avant) ;
+  //   2. on envoie la requête à Supabase ;
+  //   3. si elle échoue, on affiche un message et on recharge l'état réel.
+  // L'app reste rapide même avec un mauvais réseau à l'épicerie.
+  // Règle d'or de React : `transformer` produit une NOUVELLE liste (.map, ...).
+  function executer(listeId: string, transformer: (liste: Liste) => Liste, requete: () => Promise<void>) {
+    setListes((actuelles) => actuelles.map((l) => (l.id === listeId ? transformer(l) : l)))
+    requete().catch(() => {
+      setErreur("La modification n'a pas été enregistrée. Vérifie ta connexion.")
+      recharger()
+    })
   }
 
   function ajouterArticle(listeId: string, texte: string) {
-    modifierListe(listeId, (l) =>
-      l.type === 'articles'
-        ? { ...l, articles: [...l.articles, { id: crypto.randomUUID(), texte, coche: false }] }
-        : l,
+    const article = { id: crypto.randomUUID(), texte, coche: false }
+    executer(
+      listeId,
+      (l) => (l.type === 'articles' ? { ...l, articles: [...l.articles, article] } : l),
+      () => insererArticle(listeId, article),
     )
   }
 
   function basculerArticle(listeId: string, articleId: string) {
-    modifierListe(listeId, (l) =>
-      l.type === 'articles'
-        ? { ...l, articles: l.articles.map((a) => (a.id === articleId ? { ...a, coche: !a.coche } : a)) }
-        : l,
+    // On calcule la nouvelle valeur ici, car la base a besoin de la valeur
+    // exacte (« coche = true ») et non d'un « inverse ».
+    const liste = listes.find((l) => l.id === listeId)
+    const article = liste?.type === 'articles' ? liste.articles.find((a) => a.id === articleId) : undefined
+    if (!article) return
+    const coche = !article.coche
+
+    executer(
+      listeId,
+      (l) =>
+        l.type === 'articles'
+          ? { ...l, articles: l.articles.map((a) => (a.id === articleId ? { ...a, coche } : a)) }
+          : l,
+      () => modifierCoche(articleId, coche),
     )
   }
 
   function supprimerArticle(listeId: string, articleId: string) {
-    modifierListe(listeId, (l) =>
-      l.type === 'articles' ? { ...l, articles: l.articles.filter((a) => a.id !== articleId) } : l,
+    executer(
+      listeId,
+      (l) => (l.type === 'articles' ? { ...l, articles: l.articles.filter((a) => a.id !== articleId) } : l),
+      () => supprimerArticleStocke(articleId),
     )
   }
 
   function retirerCoches(listeId: string) {
-    modifierListe(listeId, (l) =>
-      l.type === 'articles' ? { ...l, articles: l.articles.filter((a) => !a.coche) } : l,
+    executer(
+      listeId,
+      (l) => (l.type === 'articles' ? { ...l, articles: l.articles.filter((a) => !a.coche) } : l),
+      () => supprimerCoches(listeId),
     )
   }
 
   function ajouterLivre(listeId: string, livre: Omit<Livre, 'id'>) {
-    modifierListe(listeId, (l) =>
-      l.type === 'livres' ? { ...l, livres: [...l.livres, { ...livre, id: crypto.randomUUID() }] } : l,
+    const nouveau = { ...livre, id: crypto.randomUUID() }
+    executer(
+      listeId,
+      (l) => (l.type === 'livres' ? { ...l, livres: [...l.livres, nouveau] } : l),
+      () => insererLivre(listeId, nouveau),
     )
   }
 
-  return { listes, ajouterArticle, basculerArticle, supprimerArticle, retirerCoches, ajouterLivre }
+  return {
+    listes,
+    chargement,
+    erreur,
+    ajouterArticle,
+    basculerArticle,
+    supprimerArticle,
+    retirerCoches,
+    ajouterLivre,
+  }
 }

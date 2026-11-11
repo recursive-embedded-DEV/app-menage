@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import NavBar from '../composants/NavBar'
+import { deconnecter } from '../data/auth'
 import { useListes } from '../hooks/useListes'
 import type { Liste } from '../types/liste'
 
@@ -11,7 +12,7 @@ function resume(liste: Liste): string {
 }
 
 export default function ListesAccueil() {
-  const { listes } = useListes()
+  const { listes, chargement, erreur } = useListes()
 
   return (
     <div className="page-liste">
@@ -19,6 +20,8 @@ export default function ListesAccueil() {
         <h1>Listes</h1>
       </header>
       <main>
+        {erreur && <p className="message-erreur">{erreur}</p>}
+        {chargement && <p>Chargement…</p>}
         <ul>
           {listes.map((liste) => (
             <li key={liste.id} className="carte">
@@ -31,6 +34,10 @@ export default function ListesAccueil() {
             </li>
           ))}
         </ul>
+        {/* Rarement utile (la session dure), mais nécessaire pour changer de compte. */}
+        <button type="button" className="bouton-deconnexion" onClick={deconnecter}>
+          Se déconnecter
+        </button>
       </main>
       {/* Pas encore fonctionnel : la création de listes viendra plus tard */}
       <button type="button" className="fab" aria-label="Créer une liste">+</button>

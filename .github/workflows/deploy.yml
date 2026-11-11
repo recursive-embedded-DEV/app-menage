@@ -24,7 +24,21 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm run build
+      # Vite intègre les variables VITE_… dans le JavaScript AU MOMENT DU BUILD :
+      # elles doivent donc être fournies ici, à partir des secrets du dépôt.
+      - name: Build
+        run: |
+          # Sans cette vérification, un secret manquant donnerait un site
+          # « réussi » mais blanc en production. On préfère un build en échec :
+          # GitHub Pages garde alors la version précédente.
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "::error::Secrets VITE_SUPABASE_URL ou VITE_SUPABASE_PUBLISHABLE_KEY manquants (Settings → Secrets and variables → Actions)"
+            exit 1
+          fi
+          npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

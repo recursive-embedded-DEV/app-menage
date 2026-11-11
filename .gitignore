@@ -27,6 +27,7 @@ dist-ssr
 documentation/
 
 # Plans d'entraînement de course : propriété de la Clinique du coureur,
-# usage personnel seulement, ne doivent pas être dans un dépôt public
-data/
+# usage personnel seulement, ne doivent pas être dans un dépôt public.
+# Le / initial limite la règle au dossier data/ à la RACINE (sinon src/data/ serait ignoré aussi).
+/data/
 .vs/
