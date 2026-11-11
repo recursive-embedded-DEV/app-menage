@@ -31,7 +31,10 @@ export default function ListesAccueil() {
             <li key={liste.id} className="carte">
               <Link to={`/listes/${liste.id}`}>
                 <div>
-                  <h2>{liste.titre}</h2>
+                  <h2>
+                    {liste.personnelle && <span title="Liste personnelle">🔒 </span>}
+                    {liste.titre}
+                  </h2>
                   <p>{resume(liste)}</p>
                 </div>
               </Link>

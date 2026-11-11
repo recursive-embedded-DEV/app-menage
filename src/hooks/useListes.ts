@@ -3,9 +3,9 @@ import type { Livre, Liste, TypeListe } from '../types/liste'
 import { creerIdentifiant } from '../utils/identifiants'
 import {
   chargerListes,
+  changerPartage as changerPartageStocke,
   creerListe as creerListeStockee,
   ecouterChangements,
-  identifiantListeLibre,
   insererArticle,
   insererLivre,
   modifierCoche,
@@ -158,19 +158,22 @@ export function useListes() {
 
   // Création : on ATTEND la base (pas d'optimisme), car il faut l'identifiant
   // définitif pour ouvrir la nouvelle liste. Renvoie cet identifiant, ou null.
-  async function creerListe(titre: string, type: TypeListe): Promise<string | null> {
+  async function creerListe(titre: string, type: TypeListe, personnelle: boolean): Promise<string | null> {
     try {
-      const id = await identifiantListeLibre(creerIdentifiant(titre) || 'liste')
-      await creerListeStockee(id, titre, type)
+      const id = await creerListeStockee(creerIdentifiant(titre) || 'liste', titre, type, personnelle)
       setListes((actuelles) => [
         ...actuelles,
-        type === 'articles' ? { id, titre, type, articles: [] } : { id, titre, type, livres: [] },
+        type === 'articles' ? { id, titre, type, articles: [], personnelle } : { id, titre, type, livres: [], personnelle },
       ])
       return id
     } catch {
       setErreur("La liste n'a pas été créée. Vérifie ta connexion.")
       return null
     }
+  }
+
+  function changerPartage(listeId: string, personnelle: boolean) {
+    executer(listeId, (l) => ({ ...l, personnelle }), () => changerPartageStocke(listeId, personnelle))
   }
 
   function renommerListe(listeId: string, titre: string) {
@@ -204,6 +207,7 @@ export function useListes() {
     supprimerLivre,
     creerListe,
     renommerListe,
+    changerPartage,
     supprimerListe,
   }
 }

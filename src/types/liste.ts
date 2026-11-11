@@ -26,6 +26,7 @@ export interface ListeArticles {
   titre: string;
   type: 'articles';
   articles: Article[];
+  personnelle: boolean; // vraie : visible seulement par son créateur (RLS)
 }
 
 export interface ListeLivres {
@@ -33,6 +34,7 @@ export interface ListeLivres {
   titre: string;
   type: 'livres';
   livres: Livre[];
+  personnelle: boolean; // vraie : visible seulement par son créateur (RLS)
 }
 
 export type Liste = ListeArticles | ListeLivres;

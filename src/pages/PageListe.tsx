@@ -24,6 +24,7 @@ export default function PageListe() {
     modifierLivre,
     supprimerLivre,
     renommerListe,
+    changerPartage,
     supprimerListe,
   } = useListes()
   const liste = listes.find((l) => l.id === id)
@@ -48,6 +49,7 @@ export default function PageListe() {
         {erreur && <p className="message-erreur">{erreur}</p>}
         {chargement && <p>Chargement…</p>}
         {introuvable && <p>Cette liste n'existe pas.</p>}
+        {liste?.personnelle && <p className="note-portions">🔒 Liste personnelle : toi seul la vois.</p>}
 
         {/* Grâce à l'union discriminée, TypeScript sait que liste.articles
             existe dans la première branche, et liste.livres dans la seconde. */}
@@ -71,6 +73,12 @@ export default function PageListe() {
 
         {liste && mode === 'normal' && (
           <p className="liens-compte">
+            {/* L'Épicerie reste partagée (les recettes y ajoutent des ingrédients). */}
+            {liste.id !== LISTE_PROTEGEE && (
+              <button type="button" className="bouton-discret" onClick={() => changerPartage(liste.id, !liste.personnelle)}>
+                {liste.personnelle ? 'Partager avec le ménage' : 'Rendre personnelle'}
+              </button>
+            )}
             <button
               type="button"
               className="bouton-discret"

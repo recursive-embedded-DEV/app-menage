@@ -1,5 +1,6 @@
 import type { Article, Livre, Liste, TypeListe } from '../types/liste'
 import { premierLibre } from '../utils/identifiants'
+import { idUtilisateur } from './auth'
 import { supabase } from './supabase'
 
 // Le SEUL fichier qui sait OÙ les listes sont enregistrées : Supabase.
@@ -16,6 +17,7 @@ interface LigneListe {
   id: string
   titre: string
   type: 'articles' | 'livres'
+  proprietaire_id: string | null // null : liste partagée
   articles: Article[]
   livres: Livre[]
 }
@@ -31,7 +33,7 @@ export async function chargerListes(): Promise<Liste[]> {
   // et imbrique les articles et les livres dans chaque liste.
   const { data, error } = await supabase
     .from('listes')
-    .select('id, titre, type, articles(id, texte, coche), livres(id, titre, auteur, lien, isbn, image, categorie)')
+    .select('id, titre, type, proprietaire_id, articles(id, texte, coche), livres(id, titre, auteur, lien, isbn, image, categorie)')
     .order('cree_le')
     .order('cree_le', { referencedTable: 'articles' })
     .order('cree_le', { referencedTable: 'livres' })
@@ -39,11 +41,14 @@ export async function chargerListes(): Promise<Liste[]> {
 
   // On reconstruit l'union discriminée : une liste d'articles n'a pas de
   // champ `livres`, et inversement.
-  return (data as LigneListe[]).map((l): Liste =>
-    l.type === 'articles'
-      ? { id: l.id, titre: l.titre, type: 'articles', articles: l.articles }
-      : { id: l.id, titre: l.titre, type: 'livres', livres: l.livres },
-  )
+  // Les listes personnelles de l'AUTRE membre n'arrivent jamais ici : la base
+  // (RLS) ne les renvoie pas.
+  return (data as LigneListe[]).map((l): Liste => {
+    const personnelle = l.proprietaire_id !== null
+    return l.type === 'articles'
+      ? { id: l.id, titre: l.titre, type: 'articles', articles: l.articles, personnelle }
+      : { id: l.id, titre: l.titre, type: 'livres', livres: l.livres, personnelle }
+  })
 }
 
 // L'identifiant vient du client (crypto.randomUUID) : l'écran et la base
@@ -87,16 +92,32 @@ export async function supprimerLivre(livreId: string): Promise<void> {
 // Les listes elles-mêmes (créer, renommer, supprimer).
 // ---------------------------------------------------------------------
 
-// « quincaillerie » s'il est libre, sinon « quincaillerie-2 »… L'identifiant
-// sert dans l'adresse (#/listes/quincaillerie) et ne change plus ensuite.
-export async function identifiantListeLibre(base: string): Promise<string> {
+// Crée une liste et renvoie son identifiant : « quincaillerie » s'il est libre,
+// sinon « quincaillerie-2 »… (il sert dans l'adresse et ne change plus).
+// Piège : les listes PERSONNELLES de l'autre membre sont invisibles (RLS) ;
+// un identifiant qui semble libre peut donc être déjà pris. La base refuse
+// alors le doublon (code 23505) : on réessaie avec le suivant.
+export async function creerListe(base: string, titre: string, type: TypeListe, personnelle: boolean): Promise<string> {
+  const proprietaire_id = personnelle ? await idUtilisateur() : null
   const { data, error } = await supabase.from('listes').select('id').like('id', `${base}%`)
   if (error) throw error
-  return premierLibre(base, new Set((data as { id: string }[]).map((l) => l.id)))
+  const pris = new Set((data as { id: string }[]).map((l) => l.id))
+
+  for (let essai = 0; essai < 10; essai++) {
+    const id = premierLibre(base, pris)
+    const resultat = await supabase.from('listes').insert({ id, titre, type, proprietaire_id })
+    if (!resultat.error) return id
+    if (resultat.error.code !== '23505') throw resultat.error
+    pris.add(id) // pris par une liste invisible : au suivant
+  }
+  throw new Error('Aucun identifiant libre trouvé')
 }
 
-export async function creerListe(id: string, titre: string, type: TypeListe): Promise<void> {
-  verifier(await supabase.from('listes').insert({ id, titre, type }))
+// Partagée ↔ personnelle (au nom du membre connecté). L'Épicerie reste
+// partagée : la base le refuse (contrainte listes_epicerie_partagee).
+export async function changerPartage(id: string, personnelle: boolean): Promise<void> {
+  const proprietaire_id = personnelle ? await idUtilisateur() : null
+  verifier(await supabase.from('listes').update({ proprietaire_id }).eq('id', id))
 }
 
 export async function renommerListe(id: string, titre: string): Promise<void> {
