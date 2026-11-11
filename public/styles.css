@@ -15,7 +15,9 @@
 body {
     margin: 0 auto;
     max-width: 400px;
-    padding-bottom: 80px;
+    /* env(safe-area-inset-bottom) : hauteur de la barre d'accueil de l'iPhone
+       (environ 34 px en PWA plein écran ; 0 partout ailleurs). */
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
 }
 
 
@@ -63,7 +65,7 @@ body {
 
 .fab {
     position: fixed;
-    bottom: 80px;
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px));
     right: 16px;
     width: 56px;
     height: 56px;
@@ -90,6 +92,9 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
+    /* Garde les liens au-dessus de la barre d'accueil de l'iPhone ;
+       le fond blanc, lui, descend jusqu'au bord de l'écran. */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 .nav-bar a {
     align-items: center;
@@ -377,13 +382,43 @@ input:checked + span {
     color: #B3261E;
 }
 
-.bouton-deconnexion {
+/* Bouton secondaire, sans fond (déconnexion, « Plus tard » de la bannière).
+   Extrait comme classe réutilisable : 3e bouton de ce style avec .bouton-supprimer. */
+.bouton-discret {
     background: none;
     border: none;
     color: gray;
     cursor: pointer;
-    display: block;
     font-size: inherit;
-    margin: 24px auto 0;
     text-decoration: underline;
+}
+
+.bouton-deconnexion {
+    display: block;
+    margin: 24px auto 0;
+}
+
+
+/* === Bannière de mise à jour (PWA) === */
+.banniere-maj {
+    align-items: center;
+    background-color: var(--accent);
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+    left: 0;
+    margin: 0 auto;
+    max-width: 400px;
+    padding: 8px 12px;
+    position: fixed;
+    right: 0;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 10;
+}
+
+.banniere-maj .bouton-discret {
+    color: white;
+    margin-right: 8px;
 }

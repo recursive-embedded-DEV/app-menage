@@ -35,7 +35,7 @@ export default function ListesAccueil() {
           ))}
         </ul>
         {/* Rarement utile (la session dure), mais nécessaire pour changer de compte. */}
-        <button type="button" className="bouton-deconnexion" onClick={deconnecter}>
+        <button type="button" className="bouton-discret bouton-deconnexion" onClick={deconnecter}>
           Se déconnecter
         </button>
       </main>

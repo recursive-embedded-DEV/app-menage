@@ -4,6 +4,7 @@ import PageRecette from './pages/PageRecette'
 import ListesAccueil from './pages/ListesAccueil'
 import PageListe from './pages/PageListe'
 import RouteProtegee from './composants/RouteProtegee'
+import BanniereMiseAJour from './composants/BanniereMiseAJour'
 
 // Le « standard » de l'app : quelle adresse affiche quelle page.
 // HashRouter met la route après un # (ex. index.html#/listes/epicerie),
@@ -11,6 +12,8 @@ import RouteProtegee from './composants/RouteProtegee'
 export default function App() {
   return (
     <HashRouter>
+      {/* Hors des <Routes> : visible sur toutes les pages. */}
+      <BanniereMiseAJour />
       <Routes>
         <Route path="/" element={<Navigate to="/listes" replace />} />
         {/* Listes : réservées aux membres du ménage connectés */}

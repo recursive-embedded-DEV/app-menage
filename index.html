@@ -2,8 +2,17 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- favicon.ico pour les vieux navigateurs, le SVG pour les autres. -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
+    <!-- iPhone : icône et nom sur l'écran d'accueil (iOS ignore les icônes du manifeste). -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
+    <meta name="apple-mobile-web-app-title" content="M&amp;M" />
+    <!-- Android : couleur de la barre d'état, assortie à .entete-app. -->
+    <meta name="theme-color" content="#F4F1EA" />
+    <!-- viewport-fit=cover : l'app occupe tout l'écran, y compris sous la barre
+         d'accueil de l'iPhone ; styles.css s'en écarte avec env(safe-area-inset-bottom). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>M&M app</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
