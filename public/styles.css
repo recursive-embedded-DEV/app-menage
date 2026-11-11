@@ -1007,3 +1007,35 @@ a.fab {
     max-height: 90vh;
     overflow-y: auto;
 }
+
+/* === Scanner de code-barres (livres) === */
+.scanneur {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.scanneur-video {
+    aspect-ratio: 4 / 3;
+    background-color: #111;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.scanneur-video video {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+/* Ligne de visée horizontale : où placer le code-barres. */
+.scanneur-guide {
+    border-top: 2px solid #ff3b30;
+    box-shadow: 0 0 6px #ff3b30;
+    left: 10%;
+    position: absolute;
+    right: 10%;
+    top: 50%;
+}

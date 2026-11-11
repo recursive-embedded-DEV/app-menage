@@ -110,3 +110,33 @@ export function fusionnerInfos(...sources: (InfosLivre | null)[]): InfosLivre | 
   const premier = (champ: keyof InfosLivre) => trouvees.find((s) => s[champ])?.[champ] ?? ''
   return { titre: premier('titre'), auteur: premier('auteur'), couverture: premier('couverture') }
 }
+
+// ---------------------------------------------------------------------
+// Code-barres d'un livre : un EAN-13, qui EST l'ISBN-13 (978… ou 979…).
+// ---------------------------------------------------------------------
+
+// Vrai ISBN-13 ? 13 chiffres, préfixe 978 ou 979, et chiffre de contrôle :
+// les 12 premiers chiffres pondérés 1, 3, 1, 3… ; (10 − somme mod 10) mod 10
+// doit donner le 13e chiffre. Écarte une lecture de travers de la caméra.
+export function estIsbn13(code: string): boolean {
+  if (!/^97[89]\d{10}$/.test(code)) return false
+  const somme = [...code.slice(0, 12)].reduce((s, c, i) => s + Number(c) * (i % 2 === 0 ? 1 : 3), 0)
+  return (10 - (somme % 10)) % 10 === Number(code[12])
+}
+
+// ISBN-13 « 978… » → ISBN-10 (celui des liens Amazon d'un livre imprimé).
+// On retire 978 et le dernier chiffre, puis on recalcule le chiffre de
+// contrôle de l'ISBN-10 (modulo 11 ; 10 s'écrit X). Les « 979… » n'ont pas
+// d'équivalent ISBN-10 : null.
+export function isbn13VersIsbn10(isbn13: string): string | null {
+  if (!estIsbn13(isbn13) || !isbn13.startsWith('978')) return null
+  const neuf = isbn13.slice(3, 12)
+  const somme = [...neuf].reduce((s, c, i) => s + (10 - i) * Number(c), 0)
+  const controle = (11 - (somme % 11)) % 11
+  return neuf + (controle === 10 ? 'X' : String(controle))
+}
+
+// Lien Amazon d'un livre à partir de son ISBN-10 (la carte du livre y mène).
+export function lienAmazon(isbn10: string): string {
+  return `https://www.amazon.ca/dp/${isbn10}`
+}

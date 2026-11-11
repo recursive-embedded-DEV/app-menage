@@ -46,7 +46,10 @@ export default defineConfig(({ command, isPreview }) => ({
                 globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
                 // Sauf les images des recettes et des livres : 8,5 Mo, beaucoup trop
                 // lourd à imposer à l'installation. Elles ont leur propre règle ci-dessous.
-                globIgnores: ['img/**'],
+                globIgnores: ['img/**', 'assets/zxing-*.js'],
+                // Ni le lecteur de codes-barres (ZXing, ≈ 480 ko) : on ne scanne
+                // qu'occasionnellement, et le scan a besoin du réseau de toute
+                // façon (recherche du livre). Il est téléchargé au premier scan.
 
                 // Avec HashRouter, toutes les routes React sont dans index.html.
                 // agenda.html est encore une page statique séparée : on ne la
@@ -104,6 +107,18 @@ export default defineConfig(({ command, isPreview }) => ({
     // En build : le site vit sous /app-menage/ sur GitHub Pages.
     // En développement : on garde localhost:5173/ comme avant.
     base: command === 'build' || isPreview ? '/app-menage/' : '/',
+    build: {
+        rolldownOptions: {
+            output: {
+                // ZXing dans son propre fichier « zxing-… » : reconnaissable, donc
+                // excluable du pré-cache de la PWA (globIgnores ci-dessus).
+                advancedChunks: {
+                    // [\\/] : barre oblique « / » ou « \ » (chemins Windows).
+                    groups: [{ name: 'zxing', test: /node_modules[\\/]@zxing[\\/]/ }],
+                },
+            },
+        },
+    },
     server: {
         watch: {
             ignored: ['**/.vs/**'],

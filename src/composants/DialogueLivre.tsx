@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Livre } from '../types/liste'
 import { chercherInfosLivre } from '../data/couvertures'
-import { extraireAsin, isbnDepuisLien, nettoyerIsbn } from '../utils/livres'
+import { extraireAsin, isbn13VersIsbn10, isbnDepuisLien, lienAmazon, nettoyerIsbn } from '../utils/livres'
 import { cheminImage } from '../utils/temps'
+import ScanneurCodeBarres from './ScanneurCodeBarres'
 
 interface Props {
   livre: Livre | null // null : ajout ; sinon : modification de ce livre
@@ -32,6 +33,7 @@ export default function DialogueLivre({ livre, categories, onEnregistrer, onSupp
   })
   const [recherche, setRecherche] = useState<'repos' | 'en-cours' | 'rien'>('repos')
   const [confirmer, setConfirmer] = useState(false)
+  const [scanner, setScanner] = useState(false) // caméra ouverte ?
 
   useEffect(() => {
     dialogue.current?.showModal()
@@ -82,6 +84,16 @@ export default function DialogueLivre({ livre, categories, onEnregistrer, onSupp
     }
   }
 
+  // Code-barres lu (ISBN-13 valide) : ISBN, lien Amazon s'il est vide (calculé
+  // de l'ISBN-10), puis recherche du titre, de l'auteur et de la couverture.
+  function codeDetecte(isbn13: string) {
+    setScanner(false)
+    const isbn10 = isbn13VersIsbn10(isbn13)
+    const lien = champs.lien || (isbn10 ? lienAmazon(isbn10) : '')
+    maj({ isbn: isbn13, lien })
+    chercher({ isbn: isbn13, titre: champs.titre, auteur: champs.auteur, lien }, false)
+  }
+
   function soumettre(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     onEnregistrer({
@@ -102,6 +114,13 @@ export default function DialogueLivre({ livre, categories, onEnregistrer, onSupp
     <dialog id="dialogue-livre" className="dialogue" ref={dialogue} onClose={onFerme}>
       <form className="formulaire" onSubmit={soumettre}>
         <h2>{livre ? 'Modifier le livre' : 'Nouveau livre'}</h2>
+        {scanner ? (
+          <ScanneurCodeBarres onDetecte={codeDetecte} onAnnuler={() => setScanner(false)} />
+        ) : (
+          <button type="button" className="bouton" onClick={() => setScanner(true)}>
+            📷 Scanner le code-barres
+          </button>
+        )}
         <label>
           Lien Amazon <small>(le coller remplit le reste s'il s'agit d'un livre imprimé)</small>
           <input type="url" value={champs.lien} onChange={(e) => changerLien(e.target.value)} placeholder="https://www.amazon.ca/dp/…" />

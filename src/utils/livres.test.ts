@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest'
 import {
   couvertureAmazon,
   estIsbn10,
+  estIsbn13,
+  isbn13VersIsbn10,
+  lienAmazon,
   extraireAsin,
   fusionnerInfos,
   isbnDepuisLien,
@@ -108,5 +111,31 @@ describe('fusionnerInfos', () => {
 
   it('couvertureAmazon : adresse par le code du livre', () => {
     expect(couvertureAmazon('1541705491')).toBe('https://images-na.ssl-images-amazon.com/images/P/1541705491.01.L.jpg')
+  })
+})
+
+describe('code-barres (ISBN-13)', () => {
+  it.each([
+    ['9780593653661', true], // Hidden Potential
+    ['9781541705494', true], // Science Under Siege
+    ['9798886451740', true], // préfixe 979
+    ['9780593653662', false], // mauvais chiffre de contrôle
+    ['0012345678905', false], // EAN-13 qui n'est pas un livre
+    ['978059365366', false], // 12 chiffres
+  ])('estIsbn13(%s) → %s', (code, attendu) => {
+    expect(estIsbn13(code)).toBe(attendu)
+  })
+
+  it.each([
+    ['9780593653661', '0593653661'],
+    ['9781541705494', '1541705491'],
+    ['9780804429573', '080442957X'], // contrôle 10 → X
+    ['9798886451740', null], // 979 : pas d'ISBN-10
+  ])('isbn13VersIsbn10(%s) → %s', (isbn13, attendu) => {
+    expect(isbn13VersIsbn10(isbn13)).toBe(attendu)
+  })
+
+  it('lienAmazon', () => {
+    expect(lienAmazon('1541705491')).toBe('https://www.amazon.ca/dp/1541705491')
   })
 })
