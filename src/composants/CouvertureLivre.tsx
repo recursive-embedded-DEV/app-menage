@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import type { Livre } from '../types/liste'
+import { couvertureOpenLibrary } from '../data/couvertures'
 import { cheminImage } from '../utils/temps'
 
-// Image locale si on en a une, sinon couverture Open Library via l'ISBN.
+// Image enregistrée si on en a une (fichier de public/img/ ou adresse trouvée
+// par la recherche de couverture), sinon couverture Open Library via l'ISBN.
 // Si Open Library ne l'a pas (ex. ISBN 979-8 autoédité), on n'affiche rien.
 export default function CouvertureLivre({ livre }: { livre: Livre }) {
   const [echec, setEchec] = useState(false)
@@ -10,7 +12,7 @@ export default function CouvertureLivre({ livre }: { livre: Livre }) {
   const src = livre.image
     ? cheminImage(livre.image)
     : livre.isbn
-      ? `https://covers.openlibrary.org/b/isbn/${livre.isbn}-M.jpg?default=false`
+      ? couvertureOpenLibrary(livre.isbn)
       : ''
 
   if (!src || echec) return null

@@ -970,3 +970,40 @@ a.fab {
     font-size: 1.1em;
     text-decoration: none;
 }
+
+/* Aperçu de la couverture dans la boîte du livre. */
+.couverture-livre {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+}
+
+.couverture-livre img,
+.couverture-vide {
+    border-radius: 4px;
+    flex-shrink: 0;
+    height: 96px;
+    object-fit: cover;
+    width: 64px;
+}
+
+.couverture-vide {
+    align-items: center;
+    background-color: var(--fond-entete);
+    display: flex;
+    font-size: 28px;
+    justify-content: center;
+}
+
+.couverture-livre > div {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* La boîte du livre est plus longue : elle défile sur un petit écran. */
+#dialogue-livre {
+    max-height: 90vh;
+    overflow-y: auto;
+}

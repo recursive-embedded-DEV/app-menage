@@ -8,4 +8,6 @@
 interface ImportMetaEnv {
   readonly VITE_SUPABASE_URL: string
   readonly VITE_SUPABASE_PUBLISHABLE_KEY: string
+  // Facultative : sans elle, la recherche de livres saute Google Books.
+  readonly VITE_GOOGLE_BOOKS_KEY?: string
 }
