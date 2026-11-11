@@ -3,6 +3,8 @@ import type { GroupeIngredients, LigneIngredient } from '../utils/edition-recett
 import { ligneVide } from '../utils/edition-recette'
 import { formaterValeur } from '../utils/nutrition'
 import DialogueIngredient from './DialogueIngredient'
+import { DESSINS } from './dessins'
+import { Icone } from './Icones'
 import type { ChoixIngredient } from './DialogueIngredient'
 
 interface Props {
@@ -78,7 +80,7 @@ export default function EditeurIngredients({ groupes, onChange }: Props) {
                     onChange={(e) => modifierLigne(g.cle, l.cle, { nom: e.target.value })}
                   />
                   <button type="button" className="quantite-reliee" onClick={() => setDialogue({ groupe: g.cle, ligne: l })}>
-                    {l.quantite || 'Quantité'} · {formaterValeur(l.grammes, 'proteines_g')} g ✏️
+                    {l.quantite || 'Quantité'} · {formaterValeur(l.grammes, 'proteines_g')} g <Icone dessin={DESSINS.modifier} taille={16} />
                   </button>
                 </>
               ) : (

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
+import BarreHaut from '../composants/BarreHaut'
 import NavBar from '../composants/NavBar'
 import {
   ConnexionGoogleRequise,
@@ -14,6 +15,7 @@ import {
 import { chargerRecettes } from '../data/donnees'
 import { titresListes } from '../data/stockage-listes'
 import { useConnexionGoogle } from '../hooks/useAgenda'
+import { useRetour } from '../hooks/useRetour'
 import type { Personne, ReglagesAgenda } from '../types/agenda'
 import { PERSONNES } from '../types/agenda'
 import type { ResumeRecette } from '../types/recette'
@@ -35,6 +37,11 @@ export default function PageFormulaireEvenement() {
   const { date, agendaId, id } = useParams()
   const modification = Boolean(agendaId && id)
   const naviguer = useNavigate()
+  const repli =
+    modification && agendaId && id
+      ? `/agenda/evenement/${encodeURIComponent(agendaId)}/${encodeURIComponent(id)}`
+      : `/agenda/${date ?? ''}`
+  const { retour, retourDouble } = useRetour(repli)
   const { configure, connecte, setConnecte, connecter, erreur: erreurGoogle } = useConnexionGoogle()
 
   const [reglages, setReglages] = useState<ReglagesAgenda | null>(null)
@@ -105,9 +112,18 @@ export default function PageFormulaireEvenement() {
     setEnCours(true)
     setErreur(null)
     try {
-      if (modification && agendaId && id) await modifierEvenement(agendaId, id, champs, destination)
-      else await creerEvenement(destination, champs)
-      naviguer(`/agenda/${champs.date}`, { replace: true })
+      if (modification && agendaId && id) {
+        await modifierEvenement(agendaId, id, champs, destination)
+        // Même agenda : on REVIENT au détail (il se recharge).
+        // Autre personne : l'événement a changé d'agenda, donc l'adresse du
+        // détail précédent ne mène plus nulle part : on la saute.
+        if (destination === agendaId) retour()
+        else retourDouble(`/agenda/${champs.date}`)
+      } else {
+        await creerEvenement(destination, champs)
+        // Création : le formulaire est REMPLACÉ par la journée de l'événement.
+        naviguer(`/agenda/${champs.date}`, { replace: true })
+      }
     } catch (err) {
       if (err instanceof ConnexionGoogleRequise) setConnecte(false)
       setErreur("L'événement n'a pas été enregistré. Vérifie ta connexion.")
@@ -115,13 +131,9 @@ export default function PageFormulaireEvenement() {
     }
   }
 
-  const retour = modification && agendaId && id ? `/agenda/evenement/${encodeURIComponent(agendaId)}/${encodeURIComponent(id)}` : `/agenda/${date ?? ''}`
-
   return (
     <div className="page-journee">
-      <nav className="barre-retour">
-        <Link to={retour} className="bouton">← Annuler</Link>
-      </nav>
+      <BarreHaut repli={repli} fermer />
       <header className="entete-app">
         <h1>{modification ? "Modifier l'événement" : 'Nouvel événement'}</h1>
       </header>

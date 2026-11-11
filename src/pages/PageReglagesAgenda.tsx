@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router'
+import BarreHaut from '../composants/BarreHaut'
 import NavBar from '../composants/NavBar'
 import { ConnexionGoogleRequise, chargerReglages, enregistrerReglages, listerAgendas, prenomConnecte } from '../data/agenda'
 import { deconnecterGoogle } from '../data/google'
 import { useConnexionGoogle } from '../hooks/useAgenda'
+import { useRetour } from '../hooks/useRetour'
 import type { AgendaGoogle, Personne, ReglagesAgenda } from '../types/agenda'
 import { PERSONNES } from '../types/agenda'
 import { COULEURS, NOMS, proposerReglages } from '../utils/agenda'
@@ -12,7 +13,7 @@ import { COULEURS, NOMS, proposerReglages } from '../utils/agenda'
 // #/agenda/reglages : relier Google, puis choisir l'agenda Google de chaque
 // personne (Mathieu, Mariana, Ménage). Réglages privés, gardés dans Supabase.
 export default function PageReglagesAgenda() {
-  const naviguer = useNavigate()
+  const { retour } = useRetour('/agenda')
   const { configure, connecte, setConnecte, connecter, erreur: erreurGoogle } = useConnexionGoogle()
   const [agendas, setAgendas] = useState<AgendaGoogle[] | null>(null)
   const [choix, setChoix] = useState<ReglagesAgenda | null>(null)
@@ -40,7 +41,7 @@ export default function PageReglagesAgenda() {
     setEnCours(true)
     try {
       await enregistrerReglages(choix)
-      naviguer('/agenda')
+      retour()
     } catch {
       setErreur("Les réglages n'ont pas été enregistrés. Vérifie ta connexion.")
       setEnCours(false)
@@ -51,9 +52,7 @@ export default function PageReglagesAgenda() {
 
   return (
     <div className="page-journee">
-      <nav className="barre-retour">
-        <Link to="/agenda" className="bouton">← Agenda</Link>
-      </nav>
+      <BarreHaut repli="/agenda" />
       <header className="entete-app">
         <h1>Réglages de l'agenda</h1>
       </header>

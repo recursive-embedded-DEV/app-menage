@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
+import BarreHaut from '../composants/BarreHaut'
 import NavBar from '../composants/NavBar'
 import { useProfilNutrition } from '../hooks/useProfilNutrition'
 
@@ -25,9 +26,7 @@ export default function PageProfil() {
 
   return (
     <div className="page-profil">
-      <nav className="barre-retour">
-        <Link to="/listes" className="bouton">← Listes</Link>
-      </nav>
+      <BarreHaut repli="/listes" />
       <header className="entete-app">
         <h1>Mon profil</h1>
       </header>

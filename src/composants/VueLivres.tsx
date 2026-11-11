@@ -3,6 +3,8 @@ import type { Livre, ListeLivres } from '../types/liste'
 import { categoriesDe, grouperLivres } from '../utils/listes'
 import CouvertureLivre from './CouvertureLivre'
 import DialogueLivre from './DialogueLivre'
+import { DESSINS } from './dessins'
+import { Icone } from './Icones'
 
 interface Props {
   liste: ListeLivres
@@ -12,7 +14,7 @@ interface Props {
 }
 
 // Livres regroupés par catégorie (« Autres » à la fin). Toucher la carte ouvre
-// le lien Amazon ; ✏️ ouvre la boîte de modification (et de suppression).
+// le lien Amazon ; le crayon ouvre la boîte de modification (et de suppression).
 export default function VueLivres({ liste, onAjouter, onModifier, onSupprimer }: Props) {
   // null : boîte fermée ; { livre: null } : ajout ; { livre } : modification.
   const [dialogue, setDialogue] = useState<{ livre: Livre | null } | null>(null)
@@ -39,11 +41,12 @@ export default function VueLivres({ liste, onAjouter, onModifier, onSupprimer }:
                 </a>
                 <button
                   type="button"
-                  className="bouton-discret"
+                  className="bouton-icone"
                   aria-label={`Modifier ${livre.titre}`}
+                  title="Modifier"
                   onClick={() => setDialogue({ livre })}
                 >
-                  ✏️
+                  <Icone dessin={DESSINS.modifier} taille={18} />
                 </button>
               </li>
             ))}

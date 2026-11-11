@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { Link, useParams } from 'react-router'
+import BarreHaut, { LienModifier } from '../composants/BarreHaut'
 import NavBar from '../composants/NavBar'
 import DialogueEpicerie from '../composants/DialogueEpicerie'
 import SectionNutritionRecette from '../composants/SectionNutritionRecette'
@@ -7,6 +8,7 @@ import { ConnexionGoogleRequise, chargerEvenement, chargerReglages, supprimerEve
 import { chargerRecette } from '../data/donnees'
 import { titresListes } from '../data/stockage-listes'
 import { useConnexionGoogle } from '../hooks/useAgenda'
+import { useRetour } from '../hooks/useRetour'
 import type { Evenement } from '../types/agenda'
 import { PERSONNES } from '../types/agenda'
 import type { Recette } from '../types/recette'
@@ -18,7 +20,6 @@ import { cheminImage } from '../utils/temps'
 // date, heures, lieu, et ses LIENS vers les modules (recette, liste).
 export default function PageEvenement() {
   const { agendaId = '', id = '' } = useParams()
-  const naviguer = useNavigate()
   const { configure, connecte, setConnecte, connecter, erreur: erreurGoogle } = useConnexionGoogle()
   const [evenement, setEvenement] = useState<Evenement | null | undefined>(undefined) // undefined : en lecture
   const [recette, setRecette] = useState<Recette | null>(null)
@@ -49,11 +50,12 @@ export default function PageEvenement() {
   }, [connecte, agendaId, id, setConnecte])
 
   const jour = evenement ? dateLocale(evenement.debut) : ''
+  const { retour } = useRetour(jour ? `/agenda/${jour}` : '/agenda')
 
   async function supprimer() {
     try {
       await supprimerEvenement(agendaId, id)
-      naviguer(`/agenda/${jour}`, { replace: true })
+      retour() // la journée (qui se recharge sans l'événement)
     } catch {
       setConfirmer(false)
       setErreur("L'événement n'a pas été supprimé. Vérifie ta connexion.")
@@ -62,14 +64,14 @@ export default function PageEvenement() {
 
   return (
     <div className="page-journee">
-      <nav className="barre-retour">
-        <Link to={jour ? `/agenda/${jour}` : '/agenda'} className="bouton">← Agenda</Link>
+      <BarreHaut repli={jour ? `/agenda/${jour}` : '/agenda'}>
         {evenement && (
-          <Link to={`/agenda/evenement/${encodeURIComponent(agendaId)}/${encodeURIComponent(id)}/modifier`} className="bouton">
-            Modifier
-          </Link>
+          <LienModifier
+            vers={`/agenda/evenement/${encodeURIComponent(agendaId)}/${encodeURIComponent(id)}/modifier`}
+            libelle="Modifier l'événement"
+          />
         )}
-      </nav>
+      </BarreHaut>
 
       {!configure && <p className="message-erreur">Google Agenda n'est pas configuré (VITE_GOOGLE_CLIENT_ID).</p>}
       {(erreur || erreurGoogle) && <p className="message-erreur">{erreur ?? erreurGoogle}</p>}

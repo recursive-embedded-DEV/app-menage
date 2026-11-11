@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router'
+import BarreHaut from '../composants/BarreHaut'
 import NavBar from '../composants/NavBar'
 import DialogueAliment from '../composants/DialogueAliment'
 import { AlimentUtilise, supprimerAliment } from '../data/aliments'
@@ -48,9 +48,7 @@ export default function PageAliments() {
 
   return (
     <div className="page-aliments">
-      <nav className="barre-retour">
-        <Link to="/nutrition" className="bouton">← Journal</Link>
-      </nav>
+      <BarreHaut repli="/nutrition" />
       <header className="entete-app">
         <h1>Aliments</h1>
       </header>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
+import BarreHaut, { LienModifier } from '../composants/BarreHaut'
 import NavBar from '../composants/NavBar'
 import DialogueEpicerie from '../composants/DialogueEpicerie'
 import SelecteurPortions from '../composants/SelecteurPortions'
@@ -23,9 +24,7 @@ function ChargementRecette({ id }: { id: string }) {
   if (!recette) {
     return (
       <div className="page-recette">
-        <nav className="barre-retour">
-          <Link to="/recettes" className="bouton">← Retour</Link>
-        </nav>
+        <BarreHaut repli="/recettes" />
         <main>
           {chargement && <p>Chargement…</p>}
           {erreur && <p className="message-erreur">Impossible de charger la recette. Vérifie ta connexion.</p>}
@@ -61,15 +60,10 @@ function ContenuRecette({ recette }: { recette: Recette }) {
 
   return (
     <div className="page-recette">
-      <nav className="barre-retour">
-        <Link to="/recettes" className="bouton">← Retour</Link>
+      <BarreHaut repli="/recettes">
         {/* Modifier : membres connectés (la route et la base le vérifient aussi). */}
-        {connexion === 'connecte' && (
-          <Link to={`/recettes/${recette.id}/modifier`} className="bouton">
-            ✏️ Modifier
-          </Link>
-        )}
-      </nav>
+        {connexion === 'connecte' && <LienModifier vers={`/recettes/${recette.id}/modifier`} libelle="Modifier la recette" />}
+      </BarreHaut>
 
       <header className="entete-app">
         {recette.image && <img src={cheminImage(recette.image)} alt={recette.titre} />}

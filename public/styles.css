@@ -20,11 +20,50 @@ body {
     padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
 }
 
+/* TOUS les champs à 16 px minimum. En dessous, Safari sur iPhone ZOOME
+   dans le champ quand on le touche, et ne dézoome pas ensuite. Or un élément
+   position: fixed (barre de navigation, bouton +) est fixé à la page NON
+   zoomée : une fois zoomé, il défile avec le contenu et disparaît. Sans
+   taille définie, un <input> d'iPhone est plus petit que 16 px (ex. le champ
+   « Ajouter un article » des listes, la recherche d'aliments). */
+input,
+select,
+textarea {
+    font-size: max(16px, 1em);
+}
 
-/* === Composants partagés (entete-app, nav-bar, bouton, barre-retour) === */
-.barre-retour {
+
+/* === Composants partagés (entete-app, nav-bar, bouton, barre-haut) === */
+/* Barre du haut des pages qui ne sont pas des onglets (BarreHaut.tsx) :
+   chevron ‹ ou croix ✕ à gauche, crayon à droite. */
+.barre-haut {
+    align-items: center;
     background-color: var(--fond-entete);
-    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    padding: 4px;
+}
+
+/* Bouton (ou lien) fait d'une seule icône au trait : zone de toucher de
+   44 × 44 px (recommandation d'Apple), sans fond ni bordure. La couleur
+   passe à l'icône par currentColor. */
+.bouton-icone {
+    align-items: center;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    color: var(--accent);
+    cursor: pointer;
+    display: inline-flex;
+    flex-shrink: 0;
+    height: 44px;
+    justify-content: center;
+    padding: 0;
+    width: 44px;
+}
+
+.bouton-icone:hover {
+    background-color: rgba(27, 58, 92, 0.08);
 }
 
 .bouton {
@@ -806,13 +845,6 @@ body {
     background-color: #8C1D18;
 }
 
-/* Barre du haut avec deux boutons (← Retour · ✏️ Modifier). */
-.barre-retour {
-    display: flex;
-    gap: 8px;
-    justify-content: space-between;
-}
-
 /* Le bouton + peut aussi être un lien (<a class="fab">). */
 a.fab {
     text-decoration: none;
@@ -907,7 +939,10 @@ a.fab {
 
 /* Quantité d'un ingrédient relié : un bouton (rouvre la boîte), présenté comme un champ. */
 .quantite-reliee {
+    align-items: center;
     background-color: #f7f7f7;
+    display: flex;
+    gap: 6px;
     border: 1px dashed lightgray;
     border-radius: 6px;
     cursor: pointer;
@@ -939,7 +974,7 @@ a.fab {
     margin: 16px 0 8px;
 }
 
-/* Carte de livre : le lien prend la place, le bouton ✏️ reste à droite. */
+/* Carte de livre : le lien prend la place, le crayon reste à droite. */
 .carte-livre {
     align-items: center;
     display: flex;
@@ -949,11 +984,6 @@ a.fab {
 .carte-livre > a {
     flex: 1;
     min-width: 0;
-}
-
-.carte-livre > .bouton-discret {
-    font-size: 1.1em;
-    text-decoration: none;
 }
 
 /* Aperçu de la couverture dans la boîte du livre. */

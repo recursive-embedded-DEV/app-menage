@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { useParams } from 'react-router'
+import BarreHaut from '../composants/BarreHaut'
 import NavBar from '../composants/NavBar'
 import VueArticles from '../composants/VueArticles'
 import VueLivres from '../composants/VueLivres'
 import { useListes } from '../hooks/useListes'
+import { useRetour } from '../hooks/useRetour'
 
 // La liste d'épicerie reçoit les ingrédients des recettes (useAjoutEpicerie) :
 // elle ne peut pas être supprimée (elle reste renommable).
@@ -11,7 +13,7 @@ const LISTE_PROTEGEE = 'epicerie'
 
 export default function PageListe() {
   const { id } = useParams()
-  const naviguer = useNavigate()
+  const { retour } = useRetour('/listes')
   const {
     listes,
     chargement,
@@ -39,9 +41,7 @@ export default function PageListe() {
   return (
     // Les livres gardent leur classe à eux (vignettes en format portrait).
     <div className={liste?.type === 'livres' ? 'page-liste page-livres' : 'page-liste'}>
-      <nav className="barre-retour">
-        <Link to="/listes" className="bouton">← Retour</Link>
-      </nav>
+      <BarreHaut repli="/listes" />
       <header className="entete-app">
         <h1>{liste ? liste.titre : introuvable ? 'Liste introuvable' : 'Listes'}</h1>
       </header>
@@ -130,7 +130,7 @@ export default function PageListe() {
                 type="button"
                 className="bouton bouton-danger"
                 onClick={async () => {
-                  if (await supprimerListe(liste.id)) naviguer('/listes', { replace: true })
+                  if (await supprimerListe(liste.id)) retour()
                   else setMode('normal')
                 }}
               >

@@ -1,32 +1,12 @@
-import type { ReactNode } from 'react'
 import { NavLink } from 'react-router'
 import { useOngletNutrition } from '../hooks/useOngletNutrition'
-
-// Icônes au trait (SVG inline) : stroke="currentColor" prend la couleur du
-// texte du lien, donc l'onglet actif devient bleu tout seul (classe active).
-// aria-hidden : décoratives, le libellé sous l'icône suffit.
-function Icone({ chemin }: { chemin: ReactNode }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      {chemin}
-    </svg>
-  )
-}
-
-const ICONES = {
-  agenda: (
-    <>
-      <rect x="3" y="5" width="18" height="16" rx="2" />
-      <path d="M3 10h18M8 3v4M16 3v4" />
-    </>
-  ),
-  listes: <path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2" />,
-  recettes: <path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 2-2 6 0 8v10" />,
-  nutrition: <path d="M12 21c-5 0-8-4-8-9 4 0 6 2 8 5 2-3 4-5 8-5 0 5-3 9-8 9zM12 17V7" />,
-}
+import { DESSINS } from './dessins'
+import { Icone } from './Icones'
 
 // Toutes les pages sont gérées par React : <NavLink> ajoute tout seul la
 // classe "active" quand l'adresse correspond (ex. /listes/epicerie).
+// Les icônes (composants/Icones.tsx) prennent la couleur du lien : l'onglet
+// actif devient bleu tout seul. Le libellé sous l'icône lui donne son nom.
 //
 // Onglet Nutrition : affiché seulement si le membre l'a activé (Mon profil).
 // La valeur vient d'un cache LOCAL (data/cache-nutrition.ts), pas de Supabase.
@@ -40,26 +20,26 @@ export default function NavBar() {
       <ul>
         <li>
           <NavLink to="/agenda">
-            <Icone chemin={ICONES.agenda} />
+            <Icone dessin={DESSINS.agenda} />
             Agenda
           </NavLink>
         </li>
         <li>
           <NavLink to="/listes">
-            <Icone chemin={ICONES.listes} />
+            <Icone dessin={DESSINS.listes} />
             Listes
           </NavLink>
         </li>
         <li>
           <NavLink to="/recettes">
-            <Icone chemin={ICONES.recettes} />
+            <Icone dessin={DESSINS.recettes} />
             Recettes
           </NavLink>
         </li>
         {nutrition && (
           <li>
             <NavLink to="/nutrition">
-              <Icone chemin={ICONES.nutrition} />
+              <Icone dessin={DESSINS.nutrition} />
               Nutrition
             </NavLink>
           </li>

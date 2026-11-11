@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router'
+import BarreHaut from '../composants/BarreHaut'
 import NavBar from '../composants/NavBar'
 import { useProfilNutrition } from '../hooks/useProfilNutrition'
+import { useRetour } from '../hooks/useRetour'
 import type { Objectifs, ProfilNutrition } from '../types/journal'
 import { lireNombreSaisi } from '../utils/nutrition'
 
@@ -18,9 +19,7 @@ export default function PageObjectifs() {
 
   return (
     <div className="page-objectifs">
-      <nav className="barre-retour">
-        <Link to="/nutrition" className="bouton">← Journal</Link>
-      </nav>
+      <BarreHaut repli="/nutrition" />
       <header className="entete-app">
         <h1>Mes objectifs</h1>
       </header>
@@ -45,7 +44,7 @@ interface PropsFormulaire {
 }
 
 function FormulaireObjectifs({ profil, enregistrer }: PropsFormulaire) {
-  const naviguer = useNavigate()
+  const { retour } = useRetour('/nutrition')
   const [erreur, setErreur] = useState<string | null>(null)
   const [enCours, setEnCours] = useState(false)
 
@@ -71,7 +70,7 @@ function FormulaireObjectifs({ profil, enregistrer }: PropsFormulaire) {
     setErreur(null)
     try {
       await enregistrer({ ...profil, objectifs })
-      naviguer('/nutrition')
+      retour() // vers le journal ou le profil : là d'où l'on venait
     } catch {
       setErreur("Les objectifs n'ont pas été enregistrés. Vérifie ta connexion.")
       setEnCours(false)

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
+import BarreHaut from '../composants/BarreHaut'
 import NavBar from '../composants/NavBar'
 import EditeurIngredients from '../composants/EditeurIngredients'
 import { RecetteUtilisee, enregistrerRecette, identifiantLibre, supprimerRecette } from '../data/donnees'
@@ -8,6 +9,7 @@ import { supprimerImageRecette, televerserImageRecette } from '../data/images'
 import { reduireImage } from '../utils/images'
 import { cheminImage } from '../utils/temps'
 import { useRecette } from '../hooks/useRecettes'
+import { useRetour } from '../hooks/useRetour'
 import type { Brouillon } from '../utils/edition-recette'
 import { brouillonVide, validerBrouillon, versBrouillon } from '../utils/edition-recette'
 import { creerIdentifiant } from '../utils/identifiants'
@@ -43,6 +45,8 @@ interface PropsFormulaire {
 
 function FormulaireRecette({ depart, idExistant }: PropsFormulaire) {
   const naviguer = useNavigate()
+  const repli = idExistant ? `/recettes/${idExistant}` : '/recettes'
+  const { retour, retourDouble } = useRetour(repli)
   // Le brouillon n'est initialisé qu'une fois (valeur de départ de useState).
   const [b, setB] = useState<Brouillon>(depart)
   const [enCours, setEnCours] = useState(false)
@@ -95,7 +99,11 @@ function FormulaireRecette({ depart, idExistant }: PropsFormulaire) {
       // L'ancienne photo (Storage) ne sert plus : on la supprime, sans bloquer
       // si ça échoue (un fichier orphelin n'empêche rien de fonctionner).
       if (depart.image && depart.image !== image) supprimerImageRecette(depart.image).catch(() => {})
-      naviguer(`/recettes/${id}`, { replace: true })
+      // Modification : on REVIENT à la recette (elle se recharge), au lieu
+      // d'empiler une 2e copie de sa page dans l'historique.
+      // Nouvelle recette : le formulaire est REMPLACÉ par la recette créée.
+      if (idExistant) retour()
+      else naviguer(`/recettes/${id}`, { replace: true })
     } catch {
       setErreur("La recette n'a pas été enregistrée. Vérifie ta connexion.")
       setEnCours(false)
@@ -106,7 +114,8 @@ function FormulaireRecette({ depart, idExistant }: PropsFormulaire) {
     if (!idExistant) return
     try {
       await supprimerRecette(idExistant)
-      naviguer('/recettes', { replace: true })
+      // La page de la recette n'existe plus : on la saute (deux pas en arrière).
+      retourDouble('/recettes')
     } catch (e) {
       setConfirmerSuppression(false)
       setErreur(
@@ -119,11 +128,7 @@ function FormulaireRecette({ depart, idExistant }: PropsFormulaire) {
 
   return (
     <div className="page-edition-recette">
-      <nav className="barre-retour">
-        <Link to={idExistant ? `/recettes/${idExistant}` : '/recettes'} className="bouton">
-          ← Annuler
-        </Link>
-      </nav>
+      <BarreHaut repli={repli} fermer />
       <header className="entete-app">
         <h1>{idExistant ? 'Modifier la recette' : 'Nouvelle recette'}</h1>
       </header>
